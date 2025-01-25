@@ -33,6 +33,15 @@ def filter_df(df, filters):
 
     return df
 
+def summary_filter(column, selected_values):
+    if selected_values:
+        if len(selected_values) <= 3:
+            summary = f"Filtrer par {column}: {', '.join(selected_values)}"
+        else:
+            summary = f"Filtrer par {column}: {', '.join(selected_values[:3])}..."
+    else:
+        summary = f"Filtrer par {column}"
+    return summary
 
 def create_red_rectangle_shape(start, end):
     shape = {

@@ -11,19 +11,19 @@ PROJECT_PATH = Path(__file__).parent.absolute()
 sys.path.append(PROJECT_PATH)
 
 from utils.load_and_clean_df import load_data, clean_data
-from utils.dash_display import create_accordion_item, filter_df, get_shapes_critical_periods
+from utils.dash_display import create_accordion_item, filter_df, summary_filter, get_shapes_critical_periods
 
 ############################# CONFIG #############################
 DASH_APP_URL = '127.0.0.1'
 DASH_APP_PORT = 8050
 
-THEME = dbc.themes.LUX
+THEME = dbc.themes.FLATLY
 
 CUSTOM_STYLE = {
-    'backgroundColor': '#ffffff',
+    'backgroundColor': '#f8f9fa',
     'padding': '20px',
     'borderRadius': '15px',
-    'boxShadow': '0px 5px 15px rgba(0, 0, 0, 0.1)'
+    'boxShadow': '0px 4px 6px rgba(0, 0, 0, 0.1)'
 }
 
 PIE_CHART_COLORS = {
@@ -49,10 +49,10 @@ dash_app = Dash(__name__, external_stylesheets=[THEME])
 dash_app.layout = dbc.Container([
     # Header
     dbc.Row([
-        dbc.Col(html.Img(src='assets/enedis-logo.png', height='60px'), width='auto', className='d-flex align-items-center'),
-        dbc.Col(html.H1("Analyse des reportings Enedis", className='text-center text-primary fw-bold'), width=True),
-        dbc.Col(html.Img(src='assets/hackathon-genIA-logo.png', height='60px'), width='auto', className='d-flex align-items-center')
-    ], className='mb-4 align-items-center'),
+        dbc.Col(html.Img(src='assets/enedis-logo.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start'),
+        dbc.Col(html.H1("Analyse des reportings Enedis", className='text-center mb-5 mt-3 text-primary'), width=True, className='d-flex justify-content-center'),
+        dbc.Col(html.Img(src='assets/hackathon-genIA-logo.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start')
+    ], align='center', className='mb-4'),
 
     # Search Bar
     dbc.Row([
@@ -95,7 +95,7 @@ dash_app.layout = dbc.Container([
         dash_table.DataTable(
             id='data-table',
             columns=[{"name": col, "id": col} for col in df.columns],
-            page_size=20,
+            page_size=10,
             style_table={'overflowX': 'auto'},
             style_cell={'textAlign': 'left', 'padding': '12px'},
             style_header={'fontWeight': 'bold', 'backgroundColor': '#007bff', 'color': 'white', 'borderRadius': '10px'},
@@ -126,18 +126,18 @@ dash_app.layout = dbc.Container([
         Input('date-picker', 'end_date'),
         Input('keyword-search', 'value')]
 )
-def update_visualizations(selected_themes, selected_territories, selected_media, start_date, end_date, keyword):
+def update_visualizations(selected_themes, selected_territories, selected_medias, start_date, end_date, keyword):
     
-    filtered_df = filter_df(df, (selected_themes, selected_territories, selected_media, start_date, end_date, keyword)).sort_values(by='Date')
+    filtered_df = filter_df(df, (selected_themes, selected_territories, selected_medias, start_date, end_date, keyword)).sort_values(by='Date')
 
     # applied filters summary
-    theme_summary = f"Thème: {', '.join(selected_themes[:3])}..." if selected_themes else "Filtrer par Thème"
-    territory_summary = f"Territoire: {', '.join(selected_territories[:3])}..." if selected_territories else "Filtrer par Territoire"
-    media_summary = f"Média: {', '.join(selected_media[:3])}..." if selected_media else "Filtrer par Média"
+    theme_summary = summary_filter('Thème', selected_themes)
+    territory_summary = summary_filter('Territoire', selected_territories)
+    media_summary = summary_filter('Média', selected_medias)
     
     start_date_str = pd.to_datetime(start_date).strftime('%d/%m/%Y')
     end_date_str = pd.to_datetime(end_date).strftime('%d/%m/%Y')
-    date_summary = f"Date: {start_date_str} - {end_date_str}" if start_date and end_date else "Filtrer par Date"
+    date_summary = f"📅 Filtrer par Date: {start_date_str} - {end_date_str}" if start_date and end_date else "📅 Filtrer par Date"
 
     # time series
     time_series = px.line(

@@ -51,7 +51,7 @@ def create_red_rectangle_shape(start, end):
     return shape
 
 
-def get_shapes_critical_periods(df, critical_values, window, threshold):
+def get_shapes_critical_periods(df, critical_values=['Négatif', 'Factuel négatif'], window='3D', threshold=0.1):
     # sort by date
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.set_index('Date').sort_index()

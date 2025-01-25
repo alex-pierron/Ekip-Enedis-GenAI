@@ -17,11 +17,13 @@ from utils.dash_display import create_accordion_item, filter_df, get_shapes_crit
 DASH_APP_URL = '127.0.0.1'
 DASH_APP_PORT = 8050
 
+THEME = dbc.themes.LUX
+
 CUSTOM_STYLE = {
-    'backgroundColor': '#f8f9fa',
+    'backgroundColor': '#ffffff',
     'padding': '20px',
-    'borderRadius': '10px',
-    'boxShadow': '0px 4px 6px rgba(0, 0, 0, 0.1)'
+    'borderRadius': '15px',
+    'boxShadow': '0px 5px 15px rgba(0, 0, 0, 0.1)'
 }
 
 PIE_CHART_COLORS = {
@@ -33,85 +35,72 @@ PIE_CHART_COLORS = {
 }
 ##################################################################
 
-
-######################
+#######################
 ## I- LOAD CSV DATA ##
-######################
+#######################
 df = load_data(data_folder=os.path.join(PROJECT_PATH, 'data'))
 df = clean_data(df)
-
 
 ##########################
 ## II- DASH APPLICATION ##
 ##########################
-dash_app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
-
-##############################
-## II.a) application Layout ##
-##############################
+dash_app = Dash(__name__, external_stylesheets=[THEME])
 
 dash_app.layout = dbc.Container([
+    # Header
     dbc.Row([
-        dbc.Col(html.Img(src='assets/enedis-logo.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start'),
-        dbc.Col(html.H1("Analyse des reportings Enedis", className='text-center mb-5 mt-3 text-primary'), width=True, className='d-flex justify-content-center'),
-        dbc.Col(html.Img(src='assets/hackathon-genIA-logo.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start')
-    ], align='center', className='mb-4'),
-    
-    # keyword search bar
-    dbc.Row([
-        dbc.Col([
-            dcc.Input(
-                id='keyword-search',
-                type='text',
-                placeholder="Rechercher un mot-clé...",
-                debounce=True,
-                className='form-control mb-3',
-                style={'width': '100%'}
-            )
-        ], width=6)
-    ], justify='center'),
+        dbc.Col(html.Img(src='assets/enedis-logo.png', height='60px'), width='auto', className='d-flex align-items-center'),
+        dbc.Col(html.H1("Analyse des reportings Enedis", className='text-center text-primary fw-bold'), width=True),
+        dbc.Col(html.Img(src='assets/hackathon-genIA-logo.png', height='60px'), width='auto', className='d-flex align-items-center')
+    ], className='mb-4 align-items-center'),
 
-    # Dropdown filter selection 
+    # Search Bar
+    dbc.Row([
+        dbc.Col(dcc.Input(
+            id='keyword-search',
+            type='text',
+            placeholder="🔍 Rechercher un mot-clé...",
+            debounce=True,
+            className='form-control shadow-sm',
+            style={'width': '100%', 'borderRadius': '10px'}
+        ), width=6)
+    ], justify='center', className='mb-4'),
+
+    # Filters Section
     dbc.Accordion([
-
-        # multi-choice 
         create_accordion_item(df, title='Thème', id='theme'),
         create_accordion_item(df, title='Territoire', id='territory'),
         create_accordion_item(df, title='Média', id='media'),
-
-        # range time
         dbc.AccordionItem([
-            html.Label("Sélectionner une période de temps", className='fw-bold'),
+            html.Label("🕒 Sélectionner une période de temps", className='fw-bold text-secondary'),
             dcc.DatePickerRange(
                 id='date-picker',
                 start_date=df['Date'].min(),
                 end_date=df['Date'].max(),
                 display_format='DD/MM/YYYY',
-                minimum_nights=0,
-                className='form-control'
+                className='form-control',
+                style={'borderRadius': '10px'}
             ),
-        ], title="Filtrer par Date", id='date-title'),
-    
-    ], className='mb-4'),
+        ], title="📅 Filtrer par Date", id='date-title')
+    ], className='mb-4 shadow-sm'),
 
-
-    # Graphs
+    # Data Visualization
     dbc.Row([
         dbc.Col(dcc.Graph(id='tone-pie-chart', style=CUSTOM_STYLE), width=6),
         dbc.Col(dcc.Graph(id='articles-time-series', style=CUSTOM_STYLE), width=6)
     ], className='mb-4'),
 
-    # Table
+    # Data Table
     html.Div([
         dash_table.DataTable(
             id='data-table',
             columns=[{"name": col, "id": col} for col in df.columns],
             page_size=20,
             style_table={'overflowX': 'auto'},
-            style_cell={'textAlign': 'left', 'padding': '10px'},
-            style_header={'fontWeight': 'bold', 'backgroundColor': '#006fe6', 'color': 'white'},
+            style_cell={'textAlign': 'left', 'padding': '12px'},
+            style_header={'fontWeight': 'bold', 'backgroundColor': '#007bff', 'color': 'white', 'borderRadius': '10px'},
             row_selectable=False,
-            cell_selectable=False
+            cell_selectable=False,
         )
     ], style=CUSTOM_STYLE)
 ], fluid=True)
@@ -155,7 +144,7 @@ def update_visualizations(selected_themes, selected_territories, selected_media,
         data_frame=filtered_df.groupby('Date').size().reset_index(name="Nombre d'articles"),
         x='Date',
         y="Nombre d'articles",
-        title="Évolution du nombre d'articles",
+        title="📈 Évolution du nombre d'articles",
         markers=True
     )
     critical_shapes = get_shapes_critical_periods(filtered_df, critical_values=['Négatif', 'Factuel négatif'], window='3D', threshold=0.1)
@@ -165,7 +154,7 @@ def update_visualizations(selected_themes, selected_territories, selected_media,
     pie_chart = px.pie(
         filtered_df,
         names='Qualité du retour',
-        title="Répartition des tonalités",
+        title="📊 Répartition des tonalités",
         color='Qualité du retour',
         color_discrete_map=PIE_CHART_COLORS,
         category_orders={"Qualité du retour": list(PIE_CHART_COLORS.keys())}
@@ -181,6 +170,5 @@ def update_visualizations(selected_themes, selected_territories, selected_media,
 ###################
 ## II.c) run app ##
 ###################
-
 if __name__ == '__main__':
     dash_app.run(debug=True, host=DASH_APP_URL, port=DASH_APP_PORT)

@@ -109,7 +109,7 @@ dash_app.layout = dbc.Container([
             page_size=20,
             style_table={'overflowX': 'auto'},
             style_cell={'textAlign': 'left', 'padding': '10px'},
-            style_header={'fontWeight': 'bold', 'backgroundColor': '#007bff', 'color': 'white'},
+            style_header={'fontWeight': 'bold', 'backgroundColor': '#006fe6', 'color': 'white'},
             row_selectable=False,
             cell_selectable=False
         )

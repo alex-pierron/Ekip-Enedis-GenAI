@@ -45,6 +45,8 @@ df = clean_data(df)
 ## II- DASH APPLICATION ##
 ##########################
 dash_app = Dash(__name__, external_stylesheets=[THEME])
+dash_app.title = 'Dashboard | Enedis'
+dash_app._favicon = ("enedis-favicon.ico")
 
 dash_app.layout = dbc.Container([
     # Header
@@ -103,6 +105,7 @@ dash_app.layout = dbc.Container([
             cell_selectable=False,
         )
     ], style=CUSTOM_STYLE)
+    
 ], fluid=True)
 
 ############################################

@@ -23,6 +23,14 @@ CUSTOM_STYLE = {
     'borderRadius': '10px',
     'boxShadow': '0px 4px 6px rgba(0, 0, 0, 0.1)'
 }
+
+PIE_CHART_COLORS = {
+    "Positif": "#74c476",
+    "Factuel positif": "#a1d99b",
+    "Factuel": "#e5e5e5",
+    "Factuel négatif": "#f7b7a3",
+    "Négatif": "#e65555"
+}
 ##################################################################
 
 
@@ -158,7 +166,9 @@ def update_visualizations(selected_themes, selected_territories, selected_media,
         filtered_df,
         names='Qualité du retour',
         title="Répartition des tonalités",
-        color_discrete_sequence=px.colors.sequential.Blues
+        color='Qualité du retour',
+        color_discrete_map=PIE_CHART_COLORS,
+        category_orders={"Qualité du retour": list(PIE_CHART_COLORS.keys())}
     )
 
     # table

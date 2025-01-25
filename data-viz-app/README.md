@@ -13,18 +13,12 @@ Make sure you have Python 3 installed on your system.
 
 ## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd <project-folder>
-   ```
-
-2. Install required dependencies:
+1. Install required dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Ensure the necessary data files are present in the `data/` directory.
+2. Ensure the necessary data files are present in the `data/` directory.
 
 ## Usage
 
@@ -56,9 +50,3 @@ The application can be configured by modifying the following variables in `app.p
 - `DASH_APP_URL`: Set the host (default: `127.0.0.1`)
 - `DASH_APP_PORT`: Set the port (default: `8050`)
 - `CUSTOM_STYLE`: Customize UI styling
-
-## License
-This project is licensed under the MIT License.
-
-## Acknowledgments
-Special thanks to the contributors and participants of the Hackathon GenIA event.

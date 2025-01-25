@@ -61,7 +61,7 @@ dash_app.layout = dbc.Container([
         dbc.Col(dcc.Input(
             id='keywords-search',
             type='text',
-            placeholder="🔍 Rechercher un mot-clé...",
+            placeholder="🔍 Rechercher des mots-clés...",
             debounce=True,
             className='form-control shadow-sm',
             style={'width': '100%', 'borderRadius': '10px'}

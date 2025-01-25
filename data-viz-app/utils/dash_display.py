@@ -1,3 +1,5 @@
+import re
+import unicodedata
 import pandas as pd
 from dash import dcc
 import dash_bootstrap_components as dbc
@@ -17,8 +19,17 @@ def create_accordion_item(df, title, id, multi=True, style=None):
     return accordion_item
 
 
+def normalize_text(text):
+    """Convert text to lowercase and remove accents."""
+    text = str(text).lower().strip()
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', text) 
+        if unicodedata.category(c) != 'Mn'
+    )
+
+
 def filter_df(df, filters):
-    theme, territory, media, start_date, end_date, keyword = filters
+    theme, territory, media, start_date, end_date, keywords = filters
 
     if theme:
         df = df[df['Thème'].isin(theme)]
@@ -28,8 +39,17 @@ def filter_df(df, filters):
         df = df[df['Média'].isin(media)]
     if start_date and end_date:
         df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
-    if keyword and keyword.strip():
-        df = df[df[['Sujet', 'Articles']].apply(lambda x: x.str.contains(keyword, case=False, na=False)).any(axis=1)]
+
+    if keywords and keywords.strip():
+        # splt keywords by comma, space, or semicolon
+        keywords_list = [normalize_text(kw) for kw in re.split(r'[,\s;]+', keywords.strip()) if kw.strip()]
+        
+        # filter rows that all keywords are present in either 'Sujet' or 'Articles'
+        def contains_all_keywords(row):
+            combined_text = normalize_text(f"{row['Sujet']} {row['Articles']}")
+            return all(kw in combined_text for kw in keywords_list)
+
+        df = df[df.apply(contains_all_keywords, axis=1)]
 
     return df
 

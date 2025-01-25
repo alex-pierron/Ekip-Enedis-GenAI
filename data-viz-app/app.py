@@ -59,7 +59,7 @@ dash_app.layout = dbc.Container([
     # Search Bar
     dbc.Row([
         dbc.Col(dcc.Input(
-            id='keyword-search',
+            id='keywords-search',
             type='text',
             placeholder="🔍 Rechercher un mot-clé...",
             debounce=True,
@@ -105,7 +105,7 @@ dash_app.layout = dbc.Container([
             cell_selectable=False,
         )
     ], style=CUSTOM_STYLE)
-    
+
 ], fluid=True)
 
 ############################################
@@ -127,11 +127,11 @@ dash_app.layout = dbc.Container([
         Input('media-dropdown', 'value'),
         Input('date-picker', 'start_date'),
         Input('date-picker', 'end_date'),
-        Input('keyword-search', 'value')]
+        Input('keywords-search', 'value')]
 )
-def update_visualizations(selected_themes, selected_territories, selected_medias, start_date, end_date, keyword):
+def update_visualizations(selected_themes, selected_territories, selected_medias, start_date, end_date, keywords):
     
-    filtered_df = filter_df(df, (selected_themes, selected_territories, selected_medias, start_date, end_date, keyword)).sort_values(by='Date')
+    filtered_df = filter_df(df, (selected_themes, selected_territories, selected_medias, start_date, end_date, keywords)).sort_values(by='Date')
 
     # applied filters summary
     theme_summary = summary_filter('Thème', selected_themes)

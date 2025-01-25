@@ -13,27 +13,16 @@ sys.path.append(PROJECT_PATH)
 from utils.load_and_clean_df import load_data, clean_data
 from utils.dash_display import create_accordion_item, filter_df, summary_filter, get_shapes_critical_periods
 
+import assets.css_styles as myCSS
+
+
 ############################# CONFIG #############################
 DASH_APP_URL = 'localhost'
 DASH_APP_PORT = 8050
 
 THEME = dbc.themes.FLATLY
-
-CUSTOM_STYLE = {
-    'backgroundColor': '#f8f9fa',
-    'padding': '20px',
-    'borderRadius': '15px',
-    'boxShadow': '0px 4px 6px #0062cc'
-}
-
-PIE_CHART_COLORS = {
-    "Positif": "#74c476",
-    "Factuel positif": "#a1d99b",
-    "Factuel": "#e5e5e5",
-    "Factuel négatif": "#f7b7a3",
-    "Négatif": "#e65555"
-}
 ##################################################################
+
 
 #######################
 ## I- LOAD CSV DATA ##
@@ -51,8 +40,9 @@ dash_app._favicon = ("enedis-favicon.ico")
 dash_app.layout = dbc.Container([
     # Header
     dbc.Row([
-        dbc.Col(html.Img(src='assets/enedis-logo.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start'),
-        dbc.Col(html.H1("Analyse des reportings Enedis", className='text-center mb-5 mt-3 text-primary'), width=True, className='d-flex justify-content-center'),
+        dbc.Col(html.Img(src='assets/enedis-logo.svg', height='60px'), width='auto', className='d-flex align-items-center justify-content-start'),
+        dbc.Col(html.H1("Analyse des reportings Enedis", className='text-center mb-5 mt-3 text-primary'), style=myCSS.title, width=True, className='d-flex justify-content-center'),
+        dbc.Col(html.Img(src='assets/enedis-eolienne.svg', height='180px'), width='auto', className='d-flex align-items-center justify-content-start'),
         dbc.Col(html.Img(src='assets/hackathon-genIA-logo.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start')
     ], align='center', className='mb-4'),
 
@@ -61,10 +51,10 @@ dash_app.layout = dbc.Container([
         dbc.Col(dcc.Input(
             id='keywords-search',
             type='text',
-            placeholder="🔍 Rechercher des mots-clés...",
+            placeholder="💡 Rechercher des mots-clés...",
             debounce=True,
             className='form-control shadow-sm',
-            style={'width': '100%', 'borderRadius': '10px'}
+            style=myCSS.keywords_search
         ), width=6)
     ], justify='center', className='mb-4'),
 
@@ -81,30 +71,30 @@ dash_app.layout = dbc.Container([
                 end_date=df['Date'].max(),
                 display_format='DD/MM/YYYY',
                 className='form-control',
-                style={'borderRadius': '10px'}
+                style=myCSS.date_picker_range
             ),
         ], title="📅 Filtrer par Date", id='date-title')
     ], className='mb-4 shadow-sm'),
 
     # Data Visualization
     dbc.Row([
-        dbc.Col(dcc.Graph(id='tone-pie-chart', style=CUSTOM_STYLE), width=6),
-        dbc.Col(dcc.Graph(id='articles-time-series', style=CUSTOM_STYLE), width=6)
+        dbc.Col(dcc.Graph(id='tone-pie-chart', style=myCSS.container), width=6),
+        dbc.Col(dcc.Graph(id='articles-time-series', style=myCSS.container), width=6)
     ], className='mb-4'),
 
-    # Data Table
     html.Div([
-        dash_table.DataTable(
-            id='data-table',
-            columns=[{"name": col, "id": col} for col in df.columns],
-            page_size=10,
-            style_table={'overflowX': 'auto'},
-            style_cell={'textAlign': 'left', 'padding': '12px'},
-            style_header={'fontWeight': 'bold', 'backgroundColor': '#006fe6', 'color': 'white', 'borderRadius': '10px'},
-            row_selectable=False,
-            cell_selectable=False,
-        )
-    ], style=CUSTOM_STYLE)
+    dash_table.DataTable(
+        id='data-table',
+        columns=[{"name": col, "id": col} for col in df.columns],
+        page_size=myCSS.data_table['page_size'],
+        style_table=myCSS.data_table['style_table'],
+        style_header=myCSS.data_table['style_header'],
+        style_cell=myCSS.data_table['style_cell'],
+        row_selectable=False,
+        cell_selectable=False,
+        style_data_conditional=myCSS.data_table['style_data_conditional'],
+    )
+], style=myCSS.container)
 
 ], fluid=True)
 
@@ -150,8 +140,9 @@ def update_visualizations(selected_themes, selected_territories, selected_medias
         title="📈 Évolution du nombre d'articles",
         markers=True
     )
+    time_series.update_traces(line=myCSS.time_series['line'])
     critical_shapes = get_shapes_critical_periods(filtered_df, critical_values=['Négatif', 'Factuel négatif'], window='3D', threshold=0.1)
-    time_series.update_layout(shapes=critical_shapes)
+    time_series.update_layout(plot_bgcolor=myCSS.time_series['plot_bgcolor'], paper_bgcolor=myCSS.time_series['paper_bgcolor'], shapes=critical_shapes)
 
     # pie chart
     pie_chart = px.pie(
@@ -159,8 +150,8 @@ def update_visualizations(selected_themes, selected_territories, selected_medias
         names='Qualité du retour',
         title="📊 Répartition des tonalités",
         color='Qualité du retour',
-        color_discrete_map=PIE_CHART_COLORS,
-        category_orders={"Qualité du retour": list(PIE_CHART_COLORS.keys())}
+        color_discrete_map=myCSS.pie_chart_colors,
+        category_orders={"Qualité du retour": list(myCSS.pie_chart_colors.keys())}
     )
 
     # table

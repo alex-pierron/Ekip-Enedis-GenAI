@@ -72,8 +72,7 @@ def create_red_rectangle_shape(start, end):
         'x1': end,
         'y0': 0,
         'y1': 1,
-        'fillcolor': 'rgba(255, 0, 0, 0.3)',
-        'opacity': 0.5,
+        'fillcolor': '#f7b7a3',
         'layer': 'below',
         'line_width': 0,
     }

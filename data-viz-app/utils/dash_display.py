@@ -51,13 +51,13 @@ def create_red_rectangle_shape(start, end):
     return shape
 
 
-def get_shapes_critical_periods(df, critical_value, window, threshold):
+def get_shapes_critical_periods(df, critical_values, window, threshold):
     # sort by date
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.set_index('Date').sort_index()
 
     # get a mean of critical values over a rolling window
-    critical_values_per_line = df['Qualité du retour'].eq(critical_value)
+    critical_values_per_line = df['Qualité du retour'].isin(critical_values)
     critical_ratio_per_date = critical_values_per_line.groupby('Date').mean()
     rolling_window = critical_ratio_per_date.rolling(window=window, min_periods=1).mean()
     rolling_window = rolling_window.reset_index().rename(columns={'Qualité du retour': 'Ratio critique'})

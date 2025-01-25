@@ -158,7 +158,7 @@ def update_visualizations(selected_themes, selected_territories, selected_media,
         title="Évolution du nombre d'articles",
         markers=True
     )
-    critical_shapes = get_shapes_critical_periods(filtered_df, critical_value='Négatif', window='3D', threshold=0.1)
+    critical_shapes = get_shapes_critical_periods(filtered_df, critical_values=['Négatif', 'Factuel négatif'], window='3D', threshold=0.1)
     time_series.update_layout(shapes=critical_shapes)
 
     # pie chart

@@ -29,7 +29,7 @@ def filter_df(df, filters):
     if start_date and end_date:
         df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
     if keyword and keyword.strip():
-        df = df[df['Articles'].str.contains(keyword, case=False, na=False)]
+        df = df[df[['Sujet', 'Articles']].apply(lambda x: x.str.contains(keyword, case=False, na=False)).any(axis=1)]
 
     return df
 

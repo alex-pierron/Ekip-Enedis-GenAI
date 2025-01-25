@@ -1,5 +1,7 @@
 # Data Visualization Dashboard
 
+![Dashboard Preview](assets/dashboard-preview.png)
+
 This project provides an interactive web-based dashboard to analyze Enedis reporting data using Python, Dash, and Plotly.
 
 ## Features
@@ -47,6 +49,5 @@ http://127.0.0.1:8050
 
 ## Configuration
 The application can be configured by modifying the following variables in `app.py`:
-- `DASH_APP_URL`: Set the host (default: `127.0.0.1`)
+- `DASH_APP_URL`: Set the host (default: `localhost`)
 - `DASH_APP_PORT`: Set the port (default: `8050`)
-- `CUSTOM_STYLE`: Customize UI styling

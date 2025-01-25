@@ -14,7 +14,7 @@ from utils.load_and_clean_df import load_data, clean_data
 from utils.dash_display import create_accordion_item, filter_df, summary_filter, get_shapes_critical_periods
 
 ############################# CONFIG #############################
-DASH_APP_URL = '127.0.0.1'
+DASH_APP_URL = 'localhost'
 DASH_APP_PORT = 8050
 
 THEME = dbc.themes.FLATLY

@@ -31,7 +31,7 @@ python3 app.py
 
 Once the application is running, open your web browser and navigate to:
 ```
-http://127.0.0.1:8050
+http://localhost:8050
 ```
 
 ## Project Structure

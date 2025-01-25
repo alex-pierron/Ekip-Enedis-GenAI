@@ -23,7 +23,7 @@ CUSTOM_STYLE = {
     'backgroundColor': '#f8f9fa',
     'padding': '20px',
     'borderRadius': '15px',
-    'boxShadow': '0px 4px 6px rgba(0, 0, 0, 0.1)'
+    'boxShadow': '0px 4px 6px #0062cc'
 }
 
 PIE_CHART_COLORS = {
@@ -100,7 +100,7 @@ dash_app.layout = dbc.Container([
             page_size=10,
             style_table={'overflowX': 'auto'},
             style_cell={'textAlign': 'left', 'padding': '12px'},
-            style_header={'fontWeight': 'bold', 'backgroundColor': '#007bff', 'color': 'white', 'borderRadius': '10px'},
+            style_header={'fontWeight': 'bold', 'backgroundColor': '#006fe6', 'color': 'white', 'borderRadius': '10px'},
             row_selectable=False,
             cell_selectable=False,
         )

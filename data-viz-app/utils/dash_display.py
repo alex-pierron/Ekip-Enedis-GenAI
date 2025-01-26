@@ -104,13 +104,11 @@ def get_timeseries_background_shapes(df, values_categories, window='2D', thresho
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.set_index('Date').sort_index()
     
-    shapes = []
-    
     # iterate (green/red)
+    shapes = []
     for color_dict in values_categories.values():
         values = color_dict['values']
         color = color_dict['color']
-        print(f"\n\n> {color}")
 
         values_per_line = df['Qualité du retour'].isin(values)
         values_ratio_per_date = values_per_line.groupby('Date').mean()
@@ -118,11 +116,9 @@ def get_timeseries_background_shapes(df, values_categories, window='2D', thresho
         # rolling mean over the specified window period
         rolling_window = values_ratio_per_date.rolling(window=window, min_periods=1).mean()
         rolling_window = rolling_window.reset_index()
-        print(rolling_window)
 
         # identify periods where rolling mean exceeds threshold
         values_dates = rolling_window[rolling_window['Qualité du retour'] > threshold].reset_index()
-        print(values_dates)
 
         # catch the period
         if values_dates.shape[0] > 1:
@@ -130,18 +126,11 @@ def get_timeseries_background_shapes(df, values_categories, window='2D', thresho
             for i in range(len(values_dates)-1):
                 current_date = values_dates.iloc[i]
                 next_date = values_dates.iloc[i+1]
-                print(current_date)
-                print(next_date)
-                print(next_date['index'] - current_date['index'])
                 if next_date['index'] - current_date['index'] == 1:
-                    print("yes")
                     interval = (current_date['Date'], next_date['Date'])
-                    print(interval)
                     intervals.append(interval)
 
             # generate colored shapes
-            test = [create_rectangle_shape(start, end, color) for start, end in intervals]
-            print(test)
-            shapes.extend(test)
-    print(f"\n\n> final shapes: {shapes}")
+            shapes.extend([create_rectangle_shape(start, end, color) for start, end in intervals])
+            
     return shapes

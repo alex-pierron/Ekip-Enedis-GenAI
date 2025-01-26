@@ -1,6 +1,6 @@
 # Data Visualization Dashboard
 
-![Dashboard Preview](assets/dashboard-preview.png)
+![Dashboard Preview](assets/img/dashboard-preview.png)
 
 This project provides an interactive web-based dashboard to analyze Enedis reporting data using Python, Dash, and Plotly.
 

@@ -61,7 +61,7 @@ dash_app.layout = dbc.Container([
     # Filters Section
     dbc.Accordion([
         create_accordion_item(df, title='Thème', id='theme'),
-        create_accordion_item(df, title='Qualité du retour', id='tonalite', ordered_values=list(myCSS.pie_chart_colors.keys())),
+        create_accordion_item(df, title='Qualité du retour', id='tonalite', ordered_values=myCSS.pie_chart_colors_keys),
         create_accordion_item(df, title='Territoire', id='territory'),
         create_accordion_item(df, title='Média', id='media'),
         dbc.AccordionItem([
@@ -146,7 +146,12 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
     )
     time_series.update_traces(line=myCSS.time_series['line'])
     critical_shapes = get_shapes_critical_periods(filtered_df, critical_values=['Négatif', 'Factuel négatif'], window='3D', threshold=0.1)
-    time_series.update_layout(plot_bgcolor=myCSS.time_series['plot_bgcolor'], paper_bgcolor=myCSS.time_series['paper_bgcolor'], shapes=critical_shapes)
+    time_series.update_layout(
+        title_font=myCSS.time_series['title_font'],
+        plot_bgcolor=myCSS.time_series['plot_bgcolor'], 
+        paper_bgcolor=myCSS.time_series['paper_bgcolor'], 
+        shapes=critical_shapes
+    )
 
     # pie chart
     pie_chart = px.pie(
@@ -154,9 +159,10 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
         names='Qualité du retour',
         title="📊 Répartition des tonalités",
         color='Qualité du retour',
-        color_discrete_map=myCSS.pie_chart_colors,
-        category_orders={"Qualité du retour": list(myCSS.pie_chart_colors.keys())}
+        color_discrete_map=myCSS.pie_chart['colors'],
+        category_orders={"Qualité du retour": myCSS.pie_chart_colors_keys}
     )
+    pie_chart.update_layout(title_font=myCSS.pie_chart['title_font'])
 
     # table
     formated_date_df = filtered_df.reset_index().sort_values(by='Date', ascending=False)

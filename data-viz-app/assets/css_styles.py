@@ -36,18 +36,31 @@ date_picker_range = {
 
 ###### Data Visualization ######
 
-pie_chart_colors = {
-    "Positif": "#74c476",
-    "Factuel positif": "#a1d99b",
-    "Factuel": "#e5e5e5",
-    "Factuel négatif": "#f7b7a3",
-    "Négatif": "#e65555"
+pie_chart = {
+    'title_font': {
+        'family': 'Arial',
+        'size': 20,
+        'color': 'black',
+    },
+    'colors': {
+        "Positif": "#74c476",
+        "Factuel positif": "#a1d99b",
+        "Factuel": "#e5e5e5",
+        "Factuel négatif": "#f7b7a3",
+        "Négatif": "#e65555"
+    }
 }
+pie_chart_colors_keys = list(pie_chart['colors'].keys())
 
 time_series = {
     'line': {
         'color': '#2b3aec',
         'width': 2
+    },
+    'title_font': {
+        'family': 'Arial',
+        'size': 20,
+        'color': 'black',
     },
     'plot_bgcolor': '#d5eed2',
     'paper_bgcolor': 'white'
@@ -85,7 +98,7 @@ data_table = {
             'backgroundColor': color,  
             'color': 'black', 
         }
-        for key, color in pie_chart_colors.items()
+        for key, color in pie_chart['colors'].items()
     ] + \
     [ # colors for less important columns 
         {'if': {'column_id': 'Date'}, 'backgroundColor': '#f6f6f6', 'color': 'black'}, 

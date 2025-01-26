@@ -1,6 +1,3 @@
-import dash_bootstrap_components as dbc
-
-
 ###### Global ######
 
 container = {
@@ -10,17 +7,12 @@ container = {
     'boxShadow': '0px 4px 6px #808080'
 }
 
-
 ###### Header ######
-
 title = {
-    'fontFamily': 'Aldrich', 
-    'fontSize': '40px', 
-    'color': '#003366', 
-    'fontWeight': 'bold', 
+    'fontFamily': 'Aldrich',
+    'color': '#003366',
     'marginLeft': '10%'
 }
-
 
 ###### Filters Section ######
 
@@ -74,12 +66,12 @@ data_table = {
     },
 
     'style_header': {
+        'fontFamily': 'Arial', 
+        'fontSize': '16px',
         'fontWeight': 'bold', 
         'backgroundColor': '#0f53b9', 
         'color': 'white', 
         'borderRadius': '10px', 
-        'fontFamily': 'Arial', 
-        'fontSize': '16px'
     },
 
     'style_cell': {

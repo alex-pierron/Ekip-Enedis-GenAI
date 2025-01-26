@@ -13,7 +13,7 @@ sys.path.append(PROJECT_PATH)
 from utils.load_and_clean_df import load_data, clean_data
 from utils.dash_display import create_accordion_item, filter_df, summary_filter, get_shapes_critical_periods
 
-import assets.css_styles as myCSS
+import assets.css.styles as myCSS
 
 
 ############################# CONFIG #############################
@@ -30,20 +30,29 @@ THEME = dbc.themes.FLATLY
 df = load_data(data_folder=os.path.join(PROJECT_PATH, 'data'))
 df = clean_data(df)
 
+
 ##########################
 ## II- DASH APPLICATION ##
 ##########################
-dash_app = Dash(__name__, external_stylesheets=[THEME])
+dash_app = Dash(__name__, external_stylesheets=[
+    THEME,
+    'https://fonts.googleapis.com/css2?family=Aldrich&display=swap',
+    "assets/styles_important.css"
+])
 dash_app.title = 'Dashboard | Enedis'
-dash_app._favicon = ("enedis-favicon.ico")
+dash_app._favicon = ("img/enedis-favicon.ico")
+
+##############################
+## II.a) application Layout ##
+##############################
 
 dash_app.layout = dbc.Container([
     # Header
     dbc.Row([
-        dbc.Col(html.Img(src='assets/enedis-logo.svg', height='60px'), width='auto', className='d-flex align-items-center justify-content-start'),
-        dbc.Col(html.H1("Analyse des reportings Enedis", className='text-center mb-5 mt-3 text-primary'), style=myCSS.title, width=True, className='d-flex justify-content-center'),
-        dbc.Col(html.Img(src='assets/enedis-eolienne.svg', height='180px'), width='auto', className='d-flex align-items-center justify-content-start'),
-        dbc.Col(html.Img(src='assets/hackathon-genIA-logo.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start')
+        dbc.Col(html.Img(src='assets/img/enedis-logo.svg', height='60px'), width='auto', className='d-flex align-items-center justify-content-start'),
+        dbc.Col(html.H1("Analyse des reportings Enedis", className='text-center mb-5 mt-3'), style=myCSS.title, width=True, className='d-flex justify-content-center'),
+        dbc.Col(html.Img(src='assets/img/enedis-eolienne.svg', height='180px'), width='auto', className='d-flex align-items-center justify-content-start'),
+        dbc.Col(html.Img(src='assets/img/hackathon-genIA-logo.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start')
     ], align='center', className='mb-4'),
 
     # Search Bar

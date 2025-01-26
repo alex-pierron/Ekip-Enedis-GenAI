@@ -45,7 +45,7 @@ pie_chart = {
     'colors': {
         "Positif": "#74c476",
         "Factuel positif": "#a1d99b",
-        "Factuel": "#e5e5e5",
+        "Factuel": "#dfe1fc",
         "Factuel négatif": "#f7b7a3",
         "Négatif": "#e65555"
     }

@@ -72,7 +72,7 @@ def summary_filter(column, selected_values):
         summary = f"Filtrer par {column}"
     return summary
 
-def create_red_rectangle_shape(start, end):
+def create_rectangle_shape(start, end, color):
     shape = {
         'type': 'rect',
         'xref': 'x',
@@ -81,39 +81,43 @@ def create_red_rectangle_shape(start, end):
         'x1': end,
         'y0': 0,
         'y1': 1,
-        'fillcolor': '#f7b7a3',
+        'fillcolor': color,
         'layer': 'below',
         'line_width': 0,
     }
     return shape
 
-
-def get_shapes_critical_periods(df, critical_values=['Négatif', 'Factuel négatif'], window='3D', threshold=0.1):
-    # sort by date
+def get_shapes_critical_periods(df, window='3D', threshold=0.5):
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.set_index('Date').sort_index()
+    
+    values_categories = {
+        'red': ['Négatif', 'Factuel négatif'],
+        'green': ['Positif', 'Factuel positif']
+    }
+    colors = {'red': '#f7b7a3', 'green': '#a3f7b7', 'blue': '#a3c7f7'}
 
-    # get a mean of critical values over a rolling window
-    critical_values_per_line = df['Qualité du retour'].isin(critical_values)
-    critical_ratio_per_date = critical_values_per_line.groupby('Date').mean()
-    rolling_window = critical_ratio_per_date.rolling(window=window, min_periods=1).mean()
-    rolling_window = rolling_window.reset_index().rename(columns={'Qualité du retour': 'Ratio critique'})
-
-    # filter dates where threshold is reached
-    critical_dates = rolling_window[rolling_window['Ratio critique'] >= threshold].reset_index()
-
-    # generates red rectangles shapes for periods where threshold is reached    
     shapes = []
-    if(critical_dates.shape[0] > 1):
+    for color, values in values_categories.items():
+        values_per_line = df['Qualité du retour'].isin(values)
+        values_ratio_per_date = values_per_line.groupby('Date').mean()
+        rolling_window = values_ratio_per_date.rolling(window=window, min_periods=1).mean()
+        rolling_window = rolling_window.reset_index()
 
-        intervals = []
-        for i in range(len(critical_dates)-1):
-            current_date = critical_dates.iloc[i]
-            next_date = critical_dates.iloc[i+1]
+        values_dates = rolling_window[rolling_window['Qualité du retour'] >= threshold].reset_index()
 
-            if(next_date['index'] - current_date['index'] == 1):
-                intervals.append((current_date['Date'], next_date['Date']))
+        if values_dates.shape[0] > 1:
+            intervals = []
+            for i in range(len(values_dates)-1):
+                current_date = values_dates.iloc[i]
+                next_date = values_dates.iloc[i+1]
+                if next_date['index'] - current_date['index'] == 1:
+                    intervals.append((current_date['Date'], next_date['Date']))
 
-        shapes = [create_red_rectangle_shape(start, end) for start, end in intervals]
-
+            shapes.extend([create_rectangle_shape(start, end, colors[color]) for start, end in intervals])
+    
+    # If no red or green periods, default to blue
+    if not shapes:
+        shapes.append(create_rectangle_shape(df.index.min(), df.index.max(), colors['blue']))
+    
     return shapes

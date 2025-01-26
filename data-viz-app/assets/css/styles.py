@@ -53,9 +53,7 @@ time_series = {
         'family': 'Arial',
         'size': 20,
         'color': 'black',
-    },
-    'plot_bgcolor': '#d5eed2',
-    'paper_bgcolor': 'white'
+    }
 }
 
 data_table = {

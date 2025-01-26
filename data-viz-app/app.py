@@ -154,13 +154,8 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
         markers=True
     )
     time_series.update_traces(line=myCSS.time_series['line'])
-    critical_shapes = get_shapes_critical_periods(filtered_df, critical_values=['Négatif', 'Factuel négatif'], window='3D', threshold=0.1)
-    time_series.update_layout(
-        title_font=myCSS.time_series['title_font'],
-        plot_bgcolor=myCSS.time_series['plot_bgcolor'], 
-        paper_bgcolor=myCSS.time_series['paper_bgcolor'], 
-        shapes=critical_shapes
-    )
+    critical_shapes = get_shapes_critical_periods(filtered_df, window='3D', threshold=0.1)
+    time_series.update_layout(title_font=myCSS.time_series['title_font'], shapes=critical_shapes)
 
     # pie chart
     pie_chart = px.pie(

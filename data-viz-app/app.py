@@ -16,6 +16,7 @@ sys.path.append(PROJECT_PATH)
 
 from utils.load_and_clean_df import load_data, clean_data
 from utils.dash.search_filtering import create_accordion_item, filter_df, summary_filter
+from utils.dash.pie_charts import create_combined_pie_chart
 from utils.dash.articles_time_series import create_legend_trace, get_timeseries_background_shapes
 from utils.dash.wordcloud import generate_wordcloud
 from utils.dash.sentiment_trend import create_sentiment_trend_chart
@@ -28,11 +29,10 @@ import assets.css.styles as myCSS
 DASH_APP_URL = 'localhost'
 DASH_APP_PORT = 8050
 
-# availables : ['tone-pie-chart', 'articles-time-series', 'sentiment-trend', 'word-cloud', 'geographic-distribution']
+# availables : ['tone-pie-chart', 'combined-pie-chart', 'articles-time-series', 'sentiment-trend', 'word-cloud', 'geographic-distribution']
 DATA_GRID = [
-    ['tone-pie-chart', 'sentiment-trend'],
+    ['combined-pie-chart', 'sentiment-trend'],
     ['word-cloud', 'geographic-distribution'],
-    #['articles-time-series']
 ]
 
 ##################################################################
@@ -210,6 +210,10 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
         )
         pie_chart.update_layout(title_font=myCSS.pie_chart['title_font'])
         figures['tone-pie-chart'] = pie_chart
+
+    if 'combined-pie-chart' in grid_items:
+        combined_pie_chart = create_combined_pie_chart(filtered_df, myCSS.pie_chart, category_order=myCSS.pie_chart_colors_keys)
+        figures['combined-pie-chart'] = combined_pie_chart
 
     if 'word-cloud' in grid_items:
         text = ' '.join(filtered_df['Sujet'].dropna().tolist() + filtered_df['Articles'].dropna().tolist())

@@ -10,17 +10,31 @@ from pathlib import Path
 PROJECT_PATH = Path(__file__).parent.absolute()
 sys.path.append(PROJECT_PATH)
 
-from utils.load_and_clean_df import load_data, clean_data
-from utils.dash_display import create_accordion_item, filter_df, summary_filter, get_timeseries_background_shapes
+from utils.load_and_clean_df import (
+    load_data, 
+    clean_data
+)
+from utils.dash_display import (
+    create_accordion_item, 
+    filter_df, 
+    summary_filter,
+    create_legend_trace,
+    get_timeseries_background_shapes,
+    format_time_window
+)
 
 import assets.css.styles as myCSS
 
 
 ############################# CONFIG #############################
+
 DASH_APP_URL = 'localhost'
 DASH_APP_PORT = 8050
 
-THEME = dbc.themes.FLATLY
+# highlights periods on the time series when the ratio of positive or negatives articles exceed the threshold
+TIME_SERIES_WINDOW = '3D'
+TIME_SERIES_THRESHOLD = 0.1
+
 ##################################################################
 
 
@@ -35,7 +49,7 @@ df = clean_data(df)
 ## II- DASH APPLICATION ##
 ##########################
 dash_app = Dash(__name__, external_stylesheets=[
-    THEME,
+    dbc.themes.FLATLY,
     'https://fonts.googleapis.com/css2?family=Aldrich&display=swap',
     "assets/styles_important.css"
 ])
@@ -154,8 +168,39 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
         markers=True
     )
     time_series.update_traces(line=myCSS.time_series['line'])
-    critical_shapes = get_timeseries_background_shapes(filtered_df)
-    time_series.update_layout(title_font=myCSS.time_series['title_font'], shapes=critical_shapes)
+
+    # add invisible traces for legend
+    window_str_formated = format_time_window(TIME_SERIES_WINDOW)
+    time_series.add_trace(
+        create_legend_trace(
+            category='positif',
+            color=myCSS.time_series['values_categories']['green']['color'],
+            threshold=TIME_SERIES_THRESHOLD,
+            window_str_formated=window_str_formated
+        )
+    )
+    time_series.add_trace(
+        create_legend_trace(
+            category='negatif',
+            color=myCSS.time_series['values_categories']['red']['color'],
+            threshold=TIME_SERIES_THRESHOLD,
+            window_str_formated=window_str_formated
+        )
+    )
+    # add background shapes
+    background_shapes = get_timeseries_background_shapes(
+        filtered_df, 
+        values_categories=myCSS.time_series['values_categories'], 
+        window=TIME_SERIES_WINDOW, 
+        threshold=TIME_SERIES_THRESHOLD
+    )
+    time_series.update_layout(
+        title=myCSS.time_series['title'],
+        title_font=myCSS.time_series['title_font'],
+        legend=myCSS.time_series['legend'],
+        margin=myCSS.time_series['margin'], 
+        shapes=background_shapes,
+    )
 
     # pie chart
     pie_chart = px.pie(
@@ -179,4 +224,4 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
 ## II.c) run app ##
 ###################
 if __name__ == '__main__':
-    dash_app.run(debug=True, host=DASH_APP_URL, port=DASH_APP_PORT)
+    dash_app.run(debug=False, host=DASH_APP_URL, port=DASH_APP_PORT)

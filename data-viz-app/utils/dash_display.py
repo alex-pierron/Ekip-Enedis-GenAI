@@ -1,6 +1,7 @@
 import re
 import unicodedata
 import pandas as pd
+import plotly.express as px
 from dash import dcc
 import dash_bootstrap_components as dbc
 
@@ -72,6 +73,18 @@ def summary_filter(column, selected_values):
         summary = f"Filtrer par {column}"
     return summary
 
+def create_legend_trace(category, color, threshold, window_str_formated):
+    name = f"Pourcentage d'articles {category} >{threshold:.0%} sur une période glissante de {window_str_formated}"
+    invisible_scatter = px.scatter(
+        x=[None], y=[None], 
+        color_discrete_sequence=[color]
+    ).data[0].update(
+        name=name, 
+        legendgroup=category, 
+        showlegend=True
+    )
+    return invisible_scatter
+
 def create_rectangle_shape(start, end, color):
     shape = {
         'type': 'rect',
@@ -87,21 +100,10 @@ def create_rectangle_shape(start, end, color):
     }
     return shape
 
-def get_timeseries_background_shapes(df, window='3D', threshold=0.1):
+def get_timeseries_background_shapes(df, values_categories, window='3D', threshold=0.1):
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.set_index('Date').sort_index()
     
-    values_categories = {
-        'red': {
-            'values': ['Négatif', 'Factuel négatif'],
-            'color': '#f7b7a3'
-        },
-        'green': {
-            'values': ['Positif', 'Factuel positif'],
-            'color': '#a3f7b7'
-        }
-    }
-
     shapes = []
     
     # iterate (red/green)
@@ -117,7 +119,7 @@ def get_timeseries_background_shapes(df, window='3D', threshold=0.1):
         rolling_window = rolling_window.reset_index()
 
         # identify periods where rolling mean exceeds threshold
-        values_dates = rolling_window[rolling_window['Qualité du retour'] >= threshold].reset_index()
+        values_dates = rolling_window[rolling_window['Qualité du retour'] > threshold].reset_index()
 
         # catch the period
         if values_dates.shape[0] > 1:
@@ -132,3 +134,26 @@ def get_timeseries_background_shapes(df, window='3D', threshold=0.1):
             shapes.extend([create_rectangle_shape(start, end, color) for start, end in intervals])
     
     return shapes
+
+
+def format_time_window(window):
+    if window.endswith('D'):  # Days
+        days = int(window[:-1])
+        return f"{days} jour{'s' if days > 1 else ''}"
+    elif window.endswith('W'):  # Weeks
+        weeks = int(window[:-1])
+        return f"{weeks} semaine{'s' if weeks > 1 else ''}"
+    elif window.endswith('M'):  # Months
+        months = int(window[:-1])
+        return f"{months} mois"
+    elif window.endswith('Y'):  # Years
+        years = int(window[:-1])
+        return f"{years} année{'s' if years > 1 else ''}"
+    elif window.endswith('H'):  # Hours
+        hours = int(window[:-1])
+        return f"{hours} heure{'s' if hours > 1 else ''}"
+    elif window.endswith('T') or window.endswith('min'):  # Minutes
+        minutes = int(window[:-1]) if window.endswith('T') else int(window[:-3])
+        return f"{minutes} minute{'s' if minutes > 1 else ''}"
+    else:
+        return window

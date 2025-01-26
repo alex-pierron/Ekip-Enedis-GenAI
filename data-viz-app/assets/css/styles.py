@@ -53,6 +53,30 @@ time_series = {
         'family': 'Arial',
         'size': 20,
         'color': 'black',
+    },
+    'title': {
+        'y': 0.95,
+        'x': 0.5,
+        'xanchor': 'center',
+        'yanchor': 'top'
+    },
+    'legend': {
+        'x': 0.5,
+        'y': 1.1,
+        'xanchor': 'center',
+        'yanchor': 'bottom',
+        'font': {'size': 14},
+    },
+    'margin': {'t': 150},
+    'values_categories': {
+        'red': {
+            'values': ['Négatif', 'Factuel négatif'],
+            'color': '#f7b7a3'
+        },
+        'green': {
+            'values': ['Positif', 'Factuel positif'],
+            'color': '#a3f7b7'
+        }
     }
 }
 

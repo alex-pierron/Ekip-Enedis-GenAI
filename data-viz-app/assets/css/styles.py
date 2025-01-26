@@ -4,7 +4,8 @@ container = {
     'backgroundColor': '#e2e2e2',
     'padding': '20px',
     'borderRadius': '15px',
-    'boxShadow': '0px 4px 6px #808080'
+    'boxShadow': '0px 4px 6px #808080',
+    'marginBottom': '5px'
 }
 
 ###### Header ######
@@ -80,6 +81,44 @@ time_series = {
     }
 }
 
+geographic_distribution = {
+    'title': '🌍 Répartition géographique des tonalités',
+    'title_font': {
+        'family': 'Arial',
+        'size': 20,
+        'color': 'black',
+    },
+    'group_mapping': {
+        'Positif': 'Positif',
+        'Factuel positif': 'Positif',
+        'Factuel': 'Factuel',
+        'Négatif': 'Négatif',
+        'Factuel négatif': 'Négatif'
+    },
+    'color_mapping': {
+        'Positif': '#98d399',
+        'Factuel': '#dfe1fc',  
+        'Négatif': '#ed8181',
+        'Inconnu': '#f2f2f2',
+    }
+}
+
+sentiment_trend = {
+    'group_mapping': {
+        'Positif': 'Positif',
+        'Factuel positif': 'Positif',
+        'Factuel': 'Factuel',
+        'Négatif': 'Négatif',
+        'Factuel négatif': 'Négatif'
+    },
+    'color_mapping': {
+        'Positif': '#98d399',
+        'Factuel': '#dfe1fc',  
+        'Négatif': '#ed8181'
+    }
+}
+
+
 wordcloud = {
     'title': {
         'text': '☁️ Nuage de mots',
@@ -88,8 +127,6 @@ wordcloud = {
             'size': 20,
             'color': 'black',
         },
-        'x': 0.5,
-        'pad': {'t': 20},
     },
     'width': 1000,
     'height': 500,
@@ -120,7 +157,7 @@ data_table = {
         'color': '#333'},
 
     'style_data_conditional': [
-        { # colors according to the Pie Chart
+        { # colors according to the pie chart
             'if': {
                 'column_id': 'Qualité du retour',
                 'filter_query': f'{{Qualité du retour}} = "{key}"'

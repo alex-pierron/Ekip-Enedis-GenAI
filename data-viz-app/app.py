@@ -163,6 +163,8 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
         title="📈 Évolution du nombre d'articles",
         markers=True
     )
+    time_series.update_yaxes(tickmode='linear', tick0=0, dtick=1, tickformat='d')
+
     time_series.update_traces(line=myCSS.time_series['line'])
 
     # add invisible traces for legend

@@ -20,9 +20,7 @@ from utils.dash_display import (
     summary_filter,
     create_legend_trace,
     get_timeseries_background_shapes,
-    format_time_window
 )
-
 import assets.css.styles as myCSS
 
 
@@ -32,7 +30,6 @@ DASH_APP_URL = 'localhost'
 DASH_APP_PORT = 8050
 
 # highlights periods on the time series when the ratio of positive or negatives articles exceed the threshold
-TIME_SERIES_WINDOW = '3D'
 TIME_SERIES_THRESHOLD = 0.1
 
 ##################################################################
@@ -169,13 +166,11 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
     time_series.update_traces(line=myCSS.time_series['line'])
 
     # add invisible traces for legend
-    window_str_formated = format_time_window(TIME_SERIES_WINDOW)
     time_series.add_trace(
         create_legend_trace(
             category='positifs',
             color=myCSS.time_series['values_categories']['green']['color'],
             threshold=TIME_SERIES_THRESHOLD,
-            window_str_formated=window_str_formated
         )
     )
     time_series.add_trace(
@@ -183,14 +178,13 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
             category='négatifs',
             color=myCSS.time_series['values_categories']['red']['color'],
             threshold=TIME_SERIES_THRESHOLD,
-            window_str_formated=window_str_formated
         )
     )
     # add background shapes
     background_shapes = get_timeseries_background_shapes(
         filtered_df, 
         values_categories=myCSS.time_series['values_categories'], 
-        window=TIME_SERIES_WINDOW, 
+        window='2D', 
         threshold=TIME_SERIES_THRESHOLD
     )
     time_series.update_layout(
@@ -223,4 +217,4 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
 ## II.c) run app ##
 ###################
 if __name__ == '__main__':
-    dash_app.run(debug=False, host=DASH_APP_URL, port=DASH_APP_PORT)
+    dash_app.run(debug=True, host=DASH_APP_URL, port=DASH_APP_PORT)

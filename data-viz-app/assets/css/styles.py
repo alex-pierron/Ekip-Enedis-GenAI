@@ -69,14 +69,14 @@ time_series = {
     },
     'margin': {'t': 150},
     'values_categories': {
+        'green': {
+            'values': ['Positif', 'Factuel positif'],
+            'color': '#a3f7b7'
+        },
         'red': {
             'values': ['Négatif', 'Factuel négatif'],
             'color': '#f7b7a3'
         },
-        'green': {
-            'values': ['Positif', 'Factuel positif'],
-            'color': '#a3f7b7'
-        }
     }
 }
 

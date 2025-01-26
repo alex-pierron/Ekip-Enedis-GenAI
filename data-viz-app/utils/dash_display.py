@@ -73,8 +73,8 @@ def summary_filter(column, selected_values):
         summary = f"Filtrer par {column}"
     return summary
 
-def create_legend_trace(category, color, threshold, window_str_formated):
-    name = f"Pourcentage d'articles {category} >{threshold:.0%} sur une période glissante de {window_str_formated}"
+def create_legend_trace(category, color, threshold):
+    name = f"Pourcentage d'articles {category} >{threshold:.0%}"
     invisible_scatter = px.scatter(
         x=[None], y=[None], 
         color_discrete_sequence=[color]
@@ -100,16 +100,17 @@ def create_rectangle_shape(start, end, color):
     }
     return shape
 
-def get_timeseries_background_shapes(df, values_categories, window='3D', threshold=0.1):
+def get_timeseries_background_shapes(df, values_categories, window='2D', threshold=0.5):
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.set_index('Date').sort_index()
     
     shapes = []
     
-    # iterate (red/green)
+    # iterate (green/red)
     for color_dict in values_categories.values():
         values = color_dict['values']
         color = color_dict['color']
+        print(f"\n\n> {color}")
 
         values_per_line = df['Qualité du retour'].isin(values)
         values_ratio_per_date = values_per_line.groupby('Date').mean()
@@ -117,9 +118,11 @@ def get_timeseries_background_shapes(df, values_categories, window='3D', thresho
         # rolling mean over the specified window period
         rolling_window = values_ratio_per_date.rolling(window=window, min_periods=1).mean()
         rolling_window = rolling_window.reset_index()
+        print(rolling_window)
 
         # identify periods where rolling mean exceeds threshold
         values_dates = rolling_window[rolling_window['Qualité du retour'] > threshold].reset_index()
+        print(values_dates)
 
         # catch the period
         if values_dates.shape[0] > 1:
@@ -127,33 +130,18 @@ def get_timeseries_background_shapes(df, values_categories, window='3D', thresho
             for i in range(len(values_dates)-1):
                 current_date = values_dates.iloc[i]
                 next_date = values_dates.iloc[i+1]
+                print(current_date)
+                print(next_date)
+                print(next_date['index'] - current_date['index'])
                 if next_date['index'] - current_date['index'] == 1:
-                    intervals.append((current_date['Date'], next_date['Date']))
-            
+                    print("yes")
+                    interval = (current_date['Date'], next_date['Date'])
+                    print(interval)
+                    intervals.append(interval)
+
             # generate colored shapes
-            shapes.extend([create_rectangle_shape(start, end, color) for start, end in intervals])
-    
+            test = [create_rectangle_shape(start, end, color) for start, end in intervals]
+            print(test)
+            shapes.extend(test)
+    print(f"\n\n> final shapes: {shapes}")
     return shapes
-
-
-def format_time_window(window):
-    if window.endswith('D'):  # Days
-        days = int(window[:-1])
-        return f"{days} jour{'s' if days > 1 else ''}"
-    elif window.endswith('W'):  # Weeks
-        weeks = int(window[:-1])
-        return f"{weeks} semaine{'s' if weeks > 1 else ''}"
-    elif window.endswith('M'):  # Months
-        months = int(window[:-1])
-        return f"{months} mois"
-    elif window.endswith('Y'):  # Years
-        years = int(window[:-1])
-        return f"{years} année{'s' if years > 1 else ''}"
-    elif window.endswith('H'):  # Hours
-        hours = int(window[:-1])
-        return f"{hours} heure{'s' if hours > 1 else ''}"
-    elif window.endswith('T') or window.endswith('min'):  # Minutes
-        minutes = int(window[:-1]) if window.endswith('T') else int(window[:-3])
-        return f"{minutes} minute{'s' if minutes > 1 else ''}"
-    else:
-        return window

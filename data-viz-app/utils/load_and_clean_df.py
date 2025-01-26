@@ -44,7 +44,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # converts "Date" to datetime (ex: 2023-01-04)
     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
     
-    # réseau and Réseau
+    # standardize values (ex: réseau and Réseau should be considered as the same)
     columns_to_fix = ['Thème', 'Territoire', 'Qualité du retour']
     df = standardize_columns(df, columns_to_fix)
 

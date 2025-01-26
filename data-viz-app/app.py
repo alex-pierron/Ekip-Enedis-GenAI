@@ -61,6 +61,7 @@ dash_app.layout = dbc.Container([
     # Filters Section
     dbc.Accordion([
         create_accordion_item(df, title='Thème', id='theme'),
+        create_accordion_item(df, title='Qualité du retour', id='tonalite', ordered_values=list(myCSS.pie_chart_colors.keys())),
         create_accordion_item(df, title='Territoire', id='territory'),
         create_accordion_item(df, title='Média', id='media'),
         dbc.AccordionItem([
@@ -108,23 +109,26 @@ dash_app.layout = dbc.Container([
         Output('articles-time-series', 'figure'),
         Output('data-table', 'data'),
         Output('theme-title', 'title'),
+        Output('tonalite-title', 'title'),
         Output('territory-title', 'title'),
         Output('media-title', 'title'),
         Output('date-title', 'title')],
     [   
         Input('theme-dropdown', 'value'),
+        Input('tonalite-dropdown', 'value'),
         Input('territory-dropdown', 'value'),
         Input('media-dropdown', 'value'),
         Input('date-picker', 'start_date'),
         Input('date-picker', 'end_date'),
         Input('keywords-search', 'value')]
 )
-def update_visualizations(selected_themes, selected_territories, selected_medias, start_date, end_date, keywords):
+def update_visualizations(selected_themes, selected_tonalites, selected_territories, selected_medias, start_date, end_date, keywords):
     
-    filtered_df = filter_df(df, (selected_themes, selected_territories, selected_medias, start_date, end_date, keywords)).sort_values(by='Date')
+    filtered_df = filter_df(df, (selected_themes, selected_tonalites, selected_territories, selected_medias, start_date, end_date, keywords)).sort_values(by='Date')
 
     # applied filters summary
     theme_summary = summary_filter('Thème', selected_themes)
+    tonalite_summary = summary_filter('Qualité du retour', selected_tonalites)
     territory_summary = summary_filter('Territoire', selected_territories)
     media_summary = summary_filter('Média', selected_medias)
     
@@ -159,7 +163,7 @@ def update_visualizations(selected_themes, selected_territories, selected_medias
     formated_date_df['Date'] = formated_date_df['Date'].dt.strftime('%d/%m/%Y')
     table_data = (formated_date_df.to_dict('records'))
 
-    return pie_chart, time_series, table_data, theme_summary, territory_summary, media_summary, date_summary
+    return pie_chart, time_series, table_data, theme_summary, tonalite_summary, territory_summary, media_summary, date_summary
 
 ###################
 ## II.c) run app ##

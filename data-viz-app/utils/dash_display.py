@@ -5,13 +5,20 @@ from dash import dcc
 import dash_bootstrap_components as dbc
 
 
-def create_accordion_item(df, title, id, multi=True, style=None):
+def create_accordion_item(df, title, id, multi=True, style=None, ordered_values=None):
     options = df[title].unique()
+
+    # sort options by ordered given list, else alphabetically 
+    if ordered_values:
+        sorted_options = sorted(options, key=lambda option: ordered_values.index(option) if option in ordered_values else float('inf'))
+    else:
+        sorted_options = sorted(options)
+
     accordion_item = dbc.AccordionItem([
         dcc.Dropdown(
             id=f"{id}-dropdown",
-            options=[{'label': option, 'value': option} for option in options],
-            placeholder=f"Sélectionnez un ou plusieurs {title.lower()}s",
+            options=[{'label': option, 'value': option} for option in sorted_options],
+            placeholder=f"Sélectionnez un ou plusieurs {title.lower()}s" if id!='tonalite' else "Sélectionnez une ou plusieurs qualités du retour",
             multi=multi,
             style=style or {'margin-bottom': '10px'}
         ),
@@ -29,10 +36,12 @@ def normalize_text(text):
 
 
 def filter_df(df, filters):
-    theme, territory, media, start_date, end_date, keywords = filters
+    theme, tonalite, territory, media, start_date, end_date, keywords = filters
 
     if theme:
         df = df[df['Thème'].isin(theme)]
+    if tonalite:
+        df = df[df['Qualité du retour'].isin(tonalite)]
     if territory:
         df = df[df['Territoire'].isin(territory)]
     if media:

@@ -51,7 +51,6 @@ df = clean_data(df)
 dash_app = Dash(__name__, external_stylesheets=[
     dbc.themes.FLATLY,
     'https://fonts.googleapis.com/css2?family=Aldrich&display=swap',
-    "assets/styles_important.css"
 ])
 dash_app.title = 'Dashboard | Enedis'
 dash_app._favicon = ("img/enedis-favicon.ico")
@@ -173,7 +172,7 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
     window_str_formated = format_time_window(TIME_SERIES_WINDOW)
     time_series.add_trace(
         create_legend_trace(
-            category='positif',
+            category='positifs',
             color=myCSS.time_series['values_categories']['green']['color'],
             threshold=TIME_SERIES_THRESHOLD,
             window_str_formated=window_str_formated
@@ -181,7 +180,7 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
     )
     time_series.add_trace(
         create_legend_trace(
-            category='negatif',
+            category='négatifs',
             color=myCSS.time_series['values_categories']['red']['color'],
             threshold=TIME_SERIES_THRESHOLD,
             window_str_formated=window_str_formated

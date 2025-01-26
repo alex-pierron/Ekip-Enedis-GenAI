@@ -11,7 +11,7 @@ PROJECT_PATH = Path(__file__).parent.absolute()
 sys.path.append(PROJECT_PATH)
 
 from utils.load_and_clean_df import load_data, clean_data
-from utils.dash_display import create_accordion_item, filter_df, summary_filter, get_shapes_critical_periods
+from utils.dash_display import create_accordion_item, filter_df, summary_filter, get_timeseries_background_shapes
 
 import assets.css.styles as myCSS
 
@@ -154,7 +154,7 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
         markers=True
     )
     time_series.update_traces(line=myCSS.time_series['line'])
-    critical_shapes = get_shapes_critical_periods(filtered_df, window='3D', threshold=0.1)
+    critical_shapes = get_timeseries_background_shapes(filtered_df)
     time_series.update_layout(title_font=myCSS.time_series['title_font'], shapes=critical_shapes)
 
     # pie chart

@@ -87,25 +87,39 @@ def create_rectangle_shape(start, end, color):
     }
     return shape
 
-def get_shapes_critical_periods(df, window='3D', threshold=0.5):
+def get_timeseries_background_shapes(df, window='3D', threshold=0.1):
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.set_index('Date').sort_index()
     
     values_categories = {
-        'red': ['Négatif', 'Factuel négatif'],
-        'green': ['Positif', 'Factuel positif']
+        'red': {
+            'values': ['Négatif', 'Factuel négatif'],
+            'color': '#f7b7a3'
+        },
+        'green': {
+            'values': ['Positif', 'Factuel positif'],
+            'color': '#a3f7b7'
+        }
     }
-    colors = {'red': '#f7b7a3', 'green': '#a3f7b7', 'blue': '#a3c7f7'}
 
     shapes = []
-    for color, values in values_categories.items():
+    
+    # iterate (red/green)
+    for color_dict in values_categories.values():
+        values = color_dict['values']
+        color = color_dict['color']
+
         values_per_line = df['Qualité du retour'].isin(values)
         values_ratio_per_date = values_per_line.groupby('Date').mean()
+
+        # rolling mean over the specified window period
         rolling_window = values_ratio_per_date.rolling(window=window, min_periods=1).mean()
         rolling_window = rolling_window.reset_index()
 
+        # identify periods where rolling mean exceeds threshold
         values_dates = rolling_window[rolling_window['Qualité du retour'] >= threshold].reset_index()
 
+        # catch the period
         if values_dates.shape[0] > 1:
             intervals = []
             for i in range(len(values_dates)-1):
@@ -113,11 +127,8 @@ def get_shapes_critical_periods(df, window='3D', threshold=0.5):
                 next_date = values_dates.iloc[i+1]
                 if next_date['index'] - current_date['index'] == 1:
                     intervals.append((current_date['Date'], next_date['Date']))
-
-            shapes.extend([create_rectangle_shape(start, end, colors[color]) for start, end in intervals])
-    
-    # If no red or green periods, default to blue
-    if not shapes:
-        shapes.append(create_rectangle_shape(df.index.min(), df.index.max(), colors['blue']))
+            
+            # generate colored shapes
+            shapes.extend([create_rectangle_shape(start, end, color) for start, end in intervals])
     
     return shapes

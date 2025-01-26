@@ -35,11 +35,11 @@ pie_chart = {
         'color': 'black',
     },
     'colors': {
-        "Positif": "#74c476",
-        "Factuel positif": "#a1d99b",
-        "Factuel": "#dfe1fc",
-        "Factuel négatif": "#f7b7a3",
-        "Négatif": "#e65555"
+        "Positif": '#74c476',
+        "Factuel positif": '#a1d99b',
+        "Factuel": '#dfe1fc',
+        "Factuel négatif": '#f7b7a3',
+        "Négatif": '#e65555'
     }
 }
 pie_chart_colors_keys = list(pie_chart['colors'].keys())

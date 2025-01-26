@@ -80,6 +80,22 @@ time_series = {
     }
 }
 
+wordcloud = {
+    'title': {
+        'text': '☁️ Nuage de mots',
+        'font': {
+            'family': 'Arial',
+            'size': 20,
+            'color': 'black',
+        },
+        'x': 0.5,
+        'pad': {'t': 20},
+    },
+    'width': 1000,
+    'height': 500,
+    'backgroundColor': 'white',
+}
+
 data_table = {
     'page_size': 20,
 

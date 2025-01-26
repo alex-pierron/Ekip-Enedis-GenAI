@@ -7,6 +7,9 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 from pathlib import Path
 
+import nltk
+from nltk.corpus import stopwords
+
 PROJECT_PATH = Path(__file__).parent.absolute()
 sys.path.append(PROJECT_PATH)
 
@@ -20,9 +23,12 @@ from utils.dash_display import (
     summary_filter,
     create_legend_trace,
     get_timeseries_background_shapes,
+    generate_wordcloud
 )
 import assets.css.styles as myCSS
 
+nltk.download('stopwords')
+FRENCH_STOP_WORDS = set(stopwords.words('french'))
 
 ############################# CONFIG #############################
 
@@ -31,6 +37,9 @@ DASH_APP_PORT = 8050
 
 # highlights periods on the time series when the ratio of positive or negatives articles exceed the threshold
 TIME_SERIES_THRESHOLD = 0.1
+
+# set to True to display the word cloud
+SHOW_WORDCLOUD = True
 
 ##################################################################
 
@@ -56,6 +65,12 @@ dash_app._favicon = ("img/enedis-favicon.ico")
 ## II.a) application Layout ##
 ##############################
 
+# conditional layout for word cloud
+wordcloud_section = dbc.Row([
+    dbc.Col([dcc.Graph(id='word-cloud', style=myCSS.container)], width=6)
+], className='mb-4', justify="center") if SHOW_WORDCLOUD else None
+
+# layout
 dash_app.layout = dbc.Container([
     # Header
     dbc.Row([
@@ -102,20 +117,21 @@ dash_app.layout = dbc.Container([
         dbc.Col(dcc.Graph(id='articles-time-series', style=myCSS.container), width=6)
     ], className='mb-4'),
 
-    html.Div([
-    dash_table.DataTable(
-        id='data-table',
-        columns=[{"name": col, "id": col} for col in df.columns],
-        page_size=myCSS.data_table['page_size'],
-        style_table=myCSS.data_table['style_table'],
-        style_header=myCSS.data_table['style_header'],
-        style_cell=myCSS.data_table['style_cell'],
-        row_selectable=False,
-        cell_selectable=False,
-        style_data_conditional=myCSS.data_table['style_data_conditional'],
-    )
-], style=myCSS.container)
+    wordcloud_section,
 
+    html.Div([
+        dash_table.DataTable(
+            id='data-table',
+            columns=[{"name": col, "id": col} for col in df.columns],
+            page_size=myCSS.data_table['page_size'],
+            style_table=myCSS.data_table['style_table'],
+            style_header=myCSS.data_table['style_header'],
+            style_cell=myCSS.data_table['style_cell'],
+            row_selectable=False,
+            cell_selectable=False,
+            style_data_conditional=myCSS.data_table['style_data_conditional'],
+        )
+    ], style=myCSS.container)
 ], fluid=True)
 
 ############################################
@@ -131,21 +147,24 @@ dash_app.layout = dbc.Container([
         Output('tonalite-title', 'title'),
         Output('territory-title', 'title'),
         Output('media-title', 'title'),
-        Output('date-title', 'title')],
-    [   
+        Output('date-title', 'title'),
+        *([Output('word-cloud', 'figure')] if SHOW_WORDCLOUD else [])
+    ],
+    [
         Input('theme-dropdown', 'value'),
         Input('tonalite-dropdown', 'value'),
         Input('territory-dropdown', 'value'),
         Input('media-dropdown', 'value'),
         Input('date-picker', 'start_date'),
         Input('date-picker', 'end_date'),
-        Input('keywords-search', 'value')]
+        Input('keywords-search', 'value')
+    ]
 )
 def update_visualizations(selected_themes, selected_tonalites, selected_territories, selected_medias, start_date, end_date, keywords):
     
     filtered_df = filter_df(df, (selected_themes, selected_tonalites, selected_territories, selected_medias, start_date, end_date, keywords)).sort_values(by='Date')
 
-    # applied filters summary
+    # filters summary
     theme_summary = summary_filter('Thème', selected_themes)
     tonalite_summary = summary_filter('Qualité du retour', selected_tonalites)
     territory_summary = summary_filter('Territoire', selected_territories)
@@ -208,15 +227,23 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
     )
     pie_chart.update_layout(title_font=myCSS.pie_chart['title_font'])
 
-    # table
+    # word cloud
+    if SHOW_WORDCLOUD:
+        text = ' '.join(filtered_df['Sujet'].dropna().tolist() + filtered_df['Articles'].dropna().tolist())
+        wordcloud = generate_wordcloud(text, style=myCSS.wordcloud, stopwords=FRENCH_STOP_WORDS)
+
+    # Table data
     formated_date_df = filtered_df.reset_index().sort_values(by='Date', ascending=False)
     formated_date_df['Date'] = formated_date_df['Date'].dt.strftime('%d/%m/%Y')
-    table_data = (formated_date_df.to_dict('records'))
+    table_data = formated_date_df.to_dict('records')
 
-    return pie_chart, time_series, table_data, theme_summary, tonalite_summary, territory_summary, media_summary, date_summary
+    if SHOW_WORDCLOUD:
+        return pie_chart, time_series, table_data, theme_summary, tonalite_summary, territory_summary, media_summary, date_summary, wordcloud
+    else:
+        return pie_chart, time_series, table_data, theme_summary, tonalite_summary, territory_summary, media_summary, date_summary
 
 ###################
 ## II.c) run app ##
 ###################
 if __name__ == '__main__':
-    dash_app.run(debug=True, host=DASH_APP_URL, port=DASH_APP_PORT)
+    dash_app.run(debug=False, host=DASH_APP_URL, port=DASH_APP_PORT)

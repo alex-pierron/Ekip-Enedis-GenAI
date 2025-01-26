@@ -7,7 +7,7 @@ This project provides an interactive web-based dashboard to analyze Enedis repor
 ## Features
 - Keyword search functionality
 - Filtering options by theme, territory, media, and date range
-- Interactive visualizations, including pie charts and time-series graphs
+- Interactive visualizations, including pie charts, time-series and word cloud graphs
 - Tabular data display with pagination
 
 ## Prerequisites

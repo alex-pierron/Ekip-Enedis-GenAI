@@ -84,7 +84,7 @@ sentiment_trend = {
 
 wordcloud = {
     'title': {
-        'text': '☁️ Nuage de mots',
+        'text': '☁️ Fréquence des mots clés',
         'font': {
             'family': 'Arial',
             'size': 20,

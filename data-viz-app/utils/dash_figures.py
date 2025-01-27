@@ -123,7 +123,7 @@ def create_sentiment_trend_area(filtered_df, style):
         x='Date', 
         y='Count', 
         color='Tonalité',
-        title="📊 Tendance des tonalités au fil du temps",
+        title="📈 Tendance des tonalités au fil du temps",
         color_discrete_map=style['color_mapping']
     )
     
@@ -154,7 +154,7 @@ def create_sentiment_trend_line(filtered_df, style):
         x='Date', 
         y='Count', 
         color='Tonalité',
-        title="📊 Évolution des tonalités au fil du temps",
+        title="📈 Évolution des tonalités au fil du temps",
         color_discrete_map=style['color_mapping'],
         markers=True
     )
@@ -166,7 +166,7 @@ def create_sentiment_trend_line(filtered_df, style):
         legend_title="Tonalité",
         template="xgridoff",
         hovermode="x unified",
-        margin=dict(l=40, r=40, t=60, b=40)  # Adjust margins
+        margin=dict(l=40, r=40, t=60, b=40)
     )
 
     # Improve line appearance

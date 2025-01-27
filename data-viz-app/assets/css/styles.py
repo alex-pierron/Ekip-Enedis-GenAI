@@ -9,6 +9,7 @@ container = {
 }
 
 ###### Header ######
+
 title = {
     'fontFamily': 'Aldrich',
     'color': '#003366',
@@ -21,11 +22,9 @@ keywords_search = {
     'width': '100%', 
     'borderRadius': '10px'
 }
-
 date_picker_range = {
     'borderRadius': '10px'
 }
-
 
 ###### Data Visualization ######
 
@@ -45,41 +44,6 @@ pie_chart = {
 }
 pie_chart_colors_keys = list(pie_chart['colors'].keys())
 
-time_series = {
-    'line': {
-        'color': '#2b3aec',
-        'width': 2
-    },
-    'title_font': {
-        'family': 'Arial',
-        'size': 20,
-        'color': 'black',
-    },
-    'title': {
-        'y': 0.95,
-        'x': 0.5,
-        'xanchor': 'center',
-        'yanchor': 'top'
-    },
-    'legend': {
-        'x': 0.5,
-        'y': 1.1,
-        'xanchor': 'center',
-        'yanchor': 'bottom',
-        'font': {'size': 14},
-    },
-    'margin': {'t': 150},
-    'values_categories': {
-        'green': {
-            'values': ['Positif', 'Factuel positif'],
-            'color': '#a3f7b7'
-        },
-        'red': {
-            'values': ['Négatif', 'Factuel négatif'],
-            'color': '#f7b7a3'
-        },
-    }
-}
 
 geographic_distribution = {
     'title': '🌍 Répartition géographique des tonalités',
@@ -113,11 +77,10 @@ sentiment_trend = {
     },
     'color_mapping': {
         'Positif': '#98d399',
-        'Factuel': '#dfe1fc',  
+        'Factuel': '#a9aff7',  
         'Négatif': '#ed8181'
     }
 }
-
 
 wordcloud = {
     'title': {

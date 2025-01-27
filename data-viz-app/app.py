@@ -2,11 +2,12 @@ import os
 import sys
 import json
 import pandas as pd
+from pathlib import Path
+
 import plotly.express as px
 from dash import Dash, dcc, html, dash_table
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
-from pathlib import Path
 
 import nltk
 from nltk.corpus import stopwords
@@ -14,14 +15,22 @@ from nltk.corpus import stopwords
 PROJECT_PATH = Path(__file__).parent.absolute()
 sys.path.append(PROJECT_PATH)
 
-from utils.load_and_clean_df import load_data, clean_data
-from utils.dash.search_filtering import create_accordion_item, filter_df, summary_filter
-from utils.dash.pie_charts import create_combined_pie_chart
-from utils.dash.articles_time_series import create_legend_trace, get_timeseries_background_shapes
-from utils.dash.wordcloud import generate_wordcloud
-from utils.dash.sentiment_trend import create_sentiment_trend_chart
-from utils.dash.geographic_distribution import create_geographic_distribution_map
-
+from utils.load_and_clean_df import (
+    load_data,
+    clean_data
+)
+from utils.dash_filtering import (
+    create_accordion_item, 
+    filter_df, 
+    summary_filter
+)
+from utils.dash_figures import (
+    create_combined_pie_chart,
+    create_sentiment_trend_line,
+    create_sentiment_trend_area,
+    create_geographic_distribution_map,
+    create_wordcloud
+)
 import assets.css.styles as myCSS
 
 ############################# CONFIG #############################
@@ -29,27 +38,25 @@ import assets.css.styles as myCSS
 DASH_APP_URL = 'localhost'
 DASH_APP_PORT = 8050
 
-# availables : ['tone-pie-chart', 'combined-pie-chart', 'articles-time-series', 'sentiment-trend', 'word-cloud', 'geographic-distribution']
+# availables : ['combined-pie-chart', 'geographic-distribution', 'sentiment-trend-line', 'sentiment-trend-area', 'word-cloud']
 DATA_GRID = [
-    ['combined-pie-chart', 'sentiment-trend'],
+    ['combined-pie-chart', 'sentiment-trend-area'],
     ['word-cloud', 'geographic-distribution'],
 ]
+
+DEBUG_MODE = True
 
 ##################################################################
 
 
-
-
-##################
-## I- LOAD DATA ##
-##################
-
-# load csv
-df = load_data(data_folder=os.path.join(PROJECT_PATH, 'data'))
-df = clean_data(df)
-
-# load necessary data for the figures
+# Load data and define parameters regarding the given grid
 grid_items = [item for sublist in DATA_GRID for item in sublist]
+
+if 'geographic-distribution' in grid_items:
+    with open(os.path.join(PROJECT_PATH, 'assets/geojson/france-departements.geojson'), 'r') as geojson_file:
+        FRANCE_GEOJSON = json.load(geojson_file)
+else:
+    FRANCE_GEOJSON=None
 
 if 'word-cloud' in grid_items:
     nltk.download('stopwords')
@@ -57,36 +64,38 @@ if 'word-cloud' in grid_items:
 else:
     FRENCH_STOP_WORDS=None
 
-if 'geographic-distribution' in grid_items:
-    with open('assets/geojson/france-departements.geojson', 'r') as f:
-        FRANCE_GEOJSON = json.load(f)
-else:
-    FRANCE_GEOJSON=None
 
-TIME_SERIES_THRESHOLD = 0.1 if 'articles-time-series' in grid_items else None
+
+######################
+## I- LOAD CSV DATA ##
+######################
+
+df = load_data(data_folder=os.path.join(PROJECT_PATH, 'data'))
+df = clean_data(df)
+
+
 
 ##########################
 ## II- DASH APPLICATION ##
 ##########################
-dash_app = Dash(__name__, external_stylesheets=[
-    dbc.themes.FLATLY,
-    'https://fonts.googleapis.com/css2?family=Aldrich&display=swap',
-])
+
+dash_app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY, 'https://fonts.googleapis.com/css2?family=Aldrich&display=swap'])
+
 dash_app.title = 'Dashboard | Enedis'
-dash_app._favicon = ("img/enedis-favicon.ico")
+dash_app._favicon = "img/enedis-favicon.ico"
 
 ##############################
 ## II.a) application Layout ##
 ##############################
 
-def generate_layout(grid):
-    layout = []
+def generate_grid_layout(grid):
+    grid_layout = []
     for row in grid:
         cols = []
         for graph_id in row:
             cols.append(dbc.Col(dcc.Graph(id=graph_id, style=myCSS.container), width=6))
-        layout.append(dbc.Row(cols, className='mb-4'))
-    return layout
+        grid_layout.append(dbc.Row(cols, className='mb-4'))
+    return grid_layout
 
 dash_app.layout = dbc.Container([
     # Header
@@ -129,8 +138,9 @@ dash_app.layout = dbc.Container([
     ], className='mb-4 shadow-sm'),
 
     # Data Visualization
-    *generate_layout(DATA_GRID),
+    *generate_grid_layout(DATA_GRID),
 
+    # Data Table
     html.Div([
         dash_table.DataTable(
             id='data-table',
@@ -163,24 +173,23 @@ callback_outputs.extend([
     Output('media-title', 'title'),
     Output('date-title', 'title')
 ])
+callback_inputs = [
+    Input('theme-dropdown', 'value'),
+    Input('tonalite-dropdown', 'value'),
+    Input('territory-dropdown', 'value'),
+    Input('media-dropdown', 'value'),
+    Input('date-picker', 'start_date'),
+    Input('date-picker', 'end_date'),
+    Input('keywords-search', 'value')
+]
+@dash_app.callback(callback_outputs, callback_inputs)
 
-@dash_app.callback(
-    callback_outputs,
-    [
-        Input('theme-dropdown', 'value'),
-        Input('tonalite-dropdown', 'value'),
-        Input('territory-dropdown', 'value'),
-        Input('media-dropdown', 'value'),
-        Input('date-picker', 'start_date'),
-        Input('date-picker', 'end_date'),
-        Input('keywords-search', 'value')
-    ]
-)
+
 def update_visualizations(selected_themes, selected_tonalites, selected_territories, selected_medias, start_date, end_date, keywords):
     
     filtered_df = filter_df(df, (selected_themes, selected_tonalites, selected_territories, selected_medias, start_date, end_date, keywords)).sort_values(by='Date')
 
-    # filters summary
+    # Filters summary
     theme_summary = summary_filter('Thème', selected_themes)
     tonalite_summary = summary_filter('Qualité du retour', selected_tonalites)
     territory_summary = summary_filter('Territoire', selected_territories)
@@ -195,85 +204,39 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
     formated_date_df['Date'] = formated_date_df['Date'].dt.strftime('%d/%m/%Y')
     table_data = formated_date_df.to_dict('records')
 
-    # Initialize a dictionary to store all figures
+    # Generate figures regarding the given grid 
     figures = {}
-
-    # Generate figures only for graphs present in DATA_GRID
-    if 'tone-pie-chart' in grid_items:
-        pie_chart = px.pie(
-            filtered_df,
-            names='Qualité du retour',
-            title="📊 Répartition des tonalités",
-            color='Qualité du retour',
-            color_discrete_map=myCSS.pie_chart['colors'],
-            category_orders={"Qualité du retour": myCSS.pie_chart_colors_keys}
-        )
-        pie_chart.update_layout(title_font=myCSS.pie_chart['title_font'])
-        figures['tone-pie-chart'] = pie_chart
 
     if 'combined-pie-chart' in grid_items:
         combined_pie_chart = create_combined_pie_chart(filtered_df, myCSS.pie_chart, category_order=myCSS.pie_chart_colors_keys)
         figures['combined-pie-chart'] = combined_pie_chart
 
-    if 'word-cloud' in grid_items:
-        text = ' '.join(filtered_df['Sujet'].dropna().tolist() + filtered_df['Articles'].dropna().tolist())
-        wordcloud = generate_wordcloud(text, style=myCSS.wordcloud, stopwords=FRENCH_STOP_WORDS)
-        figures['word-cloud'] = wordcloud
-
     if 'geographic-distribution' in [item for sublist in DATA_GRID for item in sublist]:
         geographic_distribution = create_geographic_distribution_map(filtered_df, style=myCSS.geographic_distribution, geojson=FRANCE_GEOJSON)
         figures['geographic-distribution'] = geographic_distribution
 
-    if 'sentiment-trend' in grid_items:
-        sentiment_trend = create_sentiment_trend_chart(filtered_df, style=myCSS.sentiment_trend)
-        figures['sentiment-trend'] = sentiment_trend
+    if 'sentiment-trend-line' in grid_items:
+        sentiment_trend_line = create_sentiment_trend_line(filtered_df, style=myCSS.sentiment_trend)
+        figures['sentiment-trend-line'] = sentiment_trend_line
 
-    if 'articles-time-series' in grid_items:
-        time_series = px.line(
-            data_frame=filtered_df.groupby('Date').size().reset_index(name="Nombre d'articles"),
-            x='Date',
-            y="Nombre d'articles",
-            title="📈 Évolution du nombre d'articles",
-            markers=True
-        )
-        time_series.update_yaxes(tickmode='linear', tick0=0, dtick=1, tickformat='d')
-        time_series.update_traces(line=myCSS.time_series['line'])
-        time_series.add_trace(
-            create_legend_trace(
-                category='positifs',
-                color=myCSS.time_series['values_categories']['green']['color'],
-                threshold=TIME_SERIES_THRESHOLD,
-            )
-        )
-        time_series.add_trace(
-            create_legend_trace(
-                category='négatifs',
-                color=myCSS.time_series['values_categories']['red']['color'],
-                threshold=TIME_SERIES_THRESHOLD,
-            )
-        )
-        background_shapes = get_timeseries_background_shapes(
-            filtered_df, 
-            values_categories=myCSS.time_series['values_categories'], 
-            window='2D', 
-            threshold=TIME_SERIES_THRESHOLD
-        )
-        time_series.update_layout(
-            title=myCSS.time_series['title'],
-            title_font=myCSS.time_series['title_font'],
-            legend=myCSS.time_series['legend'],
-            margin=myCSS.time_series['margin'], 
-            shapes=background_shapes,
-        )
-        figures['articles-time-series'] = time_series
+    if 'sentiment-trend-area' in grid_items:
+        sentiment_trend_area = create_sentiment_trend_area(filtered_df, style=myCSS.sentiment_trend)
+        figures['sentiment-trend-area'] = sentiment_trend_area
+
+    if 'word-cloud' in grid_items:
+        text = ' '.join(filtered_df['Sujet'].dropna().tolist() + filtered_df['Articles'].dropna().tolist())
+        wordcloud = create_wordcloud(text, style=myCSS.wordcloud, stopwords=FRENCH_STOP_WORDS)
+        figures['word-cloud'] = wordcloud
 
     # Prepare the return values in the correct order
-    return_values = [figures.get(graph_id, {}) for graph_id in [item for sublist in DATA_GRID for item in sublist]]
-    return_values.extend([table_data, theme_summary, tonalite_summary, territory_summary, media_summary, date_summary])
+    values_to_return = [figures.get(graph_id, {}) for graph_id in [item for sublist in DATA_GRID for item in sublist]]
+    values_to_return.extend([table_data, theme_summary, tonalite_summary, territory_summary, media_summary, date_summary])
 
-    return return_values
+    return values_to_return
+
 ###################
 ## II.c) run app ##
 ###################
+
 if __name__ == '__main__':
-    dash_app.run(debug=True, host=DASH_APP_URL, port=DASH_APP_PORT)
+    dash_app.run(debug=DEBUG_MODE, host=DASH_APP_URL, port=DASH_APP_PORT)

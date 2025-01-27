@@ -13,6 +13,7 @@ def create_accordion_item(df, title, id, multi=True, style=None, ordered_values=
     else:
         sorted_options = sorted(options)
 
+    # create the accordion item
     accordion_item = dbc.AccordionItem([
         dcc.Dropdown(
             id=f"{id}-dropdown",
@@ -26,17 +27,19 @@ def create_accordion_item(df, title, id, multi=True, style=None, ordered_values=
 
 
 def normalize_text(text):
-    """Convert text to lowercase and remove accents."""
+    # convert text to lowercase and remove accents
     text = str(text).lower().strip()
-    return ''.join(
+    normalized_text = ''.join(
         c for c in unicodedata.normalize('NFD', text) 
         if unicodedata.category(c) != 'Mn'
     )
+    return normalized_text
 
 
 def filter_df(df, filters):
     theme, tonalite, territory, media, start_date, end_date, keywords = filters
 
+    # filter dataframe
     if theme:
         df = df[df['Thème'].isin(theme)]
     if tonalite:
@@ -49,7 +52,7 @@ def filter_df(df, filters):
         df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
     if keywords and keywords.strip():
-        # splt keywords by comma, space, or semicolon
+        # split keywords by comma, space, or semicolon
         keywords_list = [normalize_text(kw) for kw in re.split(r'[,\s;]+', keywords.strip()) if kw.strip()]
         
         # filter rows that all keywords are present in either 'Sujet' or 'Articles'
@@ -62,6 +65,7 @@ def filter_df(df, filters):
     return df
 
 def summary_filter(column, selected_values):
+    # generate the text to summarize applied filters
     if selected_values:
         if len(selected_values) <= 3:
             summary = f"Filtrer par {column}: {', '.join(selected_values)}"

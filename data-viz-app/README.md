@@ -72,14 +72,15 @@ The application can be configured by modifying the following variables in `app.p
 - **`DASH_APP_PORT`**: Set the port (default: `8050`).
 - **`DATA_GRID`**: Customize the layout of the dashboard by rearranging or adding/removing visualizations. Available options:
   - `combined-pie-chart`
-  - `sentiment-trend`
+  - `sentiment-trend-line`
+  - `sentiment-trend-area`
   - `word-cloud`
   - `geographic-distribution`
 
 Example:
 ```python
 DATA_GRID = [
-    ['combined-pie-chart', 'sentiment-trend'],
+    ['combined-pie-chart', 'sentiment-trend-area'],
     ['word-cloud', 'geographic-distribution'],
 ]
 ```

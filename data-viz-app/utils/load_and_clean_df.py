@@ -1,6 +1,7 @@
 import os
 import re
 import pandas as pd
+from utils.shared_utils import normalize_text
 
 def load_data(data_folder: str) -> pd.DataFrame:
     """Returns a dataframe containing data from all CSVs of a directory"""
@@ -17,15 +18,11 @@ def load_data(data_folder: str) -> pd.DataFrame:
     df_concat = pd.concat(df_list, ignore_index=True)
     return df_concat
 
-
-def normalize_text(text):
-    return re.sub(r'[^a-zA-Z0-9]', '', text.lower()) if pd.notna(text) else text
-
 def standardize_columns(df, columns_to_fix):
     for col in columns_to_fix:
         # normalize values into a temp column
-        df[f"{col}_normalized"] = df[col].apply(normalize_text)
-
+        df[f"{col}_normalized"] = df[col].apply(lambda x: normalize_text(x, keep_alphanum=True))
+        
         # get most frequent value for each normalized occurence
         most_frequent_mapping = (
             df.groupby(f"{col}_normalized")[col]
@@ -45,7 +42,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
     
     # standardize values (ex: réseau and Réseau should be considered as the same)
-    columns_to_fix = ['Thème', 'Territoire', 'Qualité du retour']
+    columns_to_fix = ['Territoire', 'Thème', 'Qualité du retour', 'Média']
     df = standardize_columns(df, columns_to_fix)
 
     return df

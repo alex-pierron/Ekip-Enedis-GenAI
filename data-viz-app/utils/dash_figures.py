@@ -56,7 +56,7 @@ def create_combined_pie_chart(filtered_df, style, category_order):
             "Percentage: %{percent:.1%}<br>"
             "Count: %{value}"
         ),
-        hole=0.3,
+        hole=0.4,
         marker=dict(line=dict(color='#FFFFFF', width=2))
     )
     fig.update_traces(showlegend=False, selector=0)

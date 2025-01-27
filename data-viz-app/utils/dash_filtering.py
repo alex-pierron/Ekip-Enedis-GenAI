@@ -1,8 +1,7 @@
 import re
-import unicodedata
 from dash import dcc
 import dash_bootstrap_components as dbc
-
+from utils.shared_utils import normalize_text
 
 def create_accordion_item(df, title, id, multi=True, style=None, ordered_values=None):
     options = df[title].unique()
@@ -24,17 +23,6 @@ def create_accordion_item(df, title, id, multi=True, style=None, ordered_values=
         ),
     ], title=f"Filtrer par {title}", id=f"{id}-title")
     return accordion_item
-
-
-def normalize_text(text):
-    # convert text to lowercase and remove accents
-    text = str(text).lower().strip()
-    normalized_text = ''.join(
-        c for c in unicodedata.normalize('NFD', text) 
-        if unicodedata.category(c) != 'Mn'
-    )
-    return normalized_text
-
 
 def filter_df(df, filters):
     theme, tonalite, territory, media, start_date, end_date, keywords = filters

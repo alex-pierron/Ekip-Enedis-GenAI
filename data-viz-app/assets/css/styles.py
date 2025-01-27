@@ -1,5 +1,9 @@
 ###### Global ######
 
+global_layout = {
+    'backgroundColor': '#f8f9fa'
+}
+
 container = {
     'backgroundColor': '#e2e2e2',
     'padding': '20px',

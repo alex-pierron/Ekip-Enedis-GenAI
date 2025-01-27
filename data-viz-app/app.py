@@ -103,7 +103,7 @@ dash_app.layout = dbc.Container([
         dbc.Col(html.Img(src='assets/img/enedis-logo.svg', height='60px'), width='auto', className='d-flex align-items-center justify-content-start'),
         dbc.Col(html.H1("Analyse des reportings Enedis", className='text-center mb-5 mt-3'), style=myCSS.title, width=True, className='d-flex justify-content-center'),
         dbc.Col(html.Img(src='assets/img/enedis-eolienne.svg', height='180px'), width='auto', className='d-flex align-items-center justify-content-start'),
-        dbc.Col(html.Img(src='assets/img/hackathon-genIA-logo.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start')
+        dbc.Col(html.Img(src='assets/img/hackathon-GenAI.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start')
     ], align='center', className='mb-4'),
 
     # Search Bar
@@ -154,7 +154,7 @@ dash_app.layout = dbc.Container([
             style_data_conditional=myCSS.data_table['style_data_conditional'],
         )
     ], style=myCSS.container)
-], fluid=True)
+], fluid=True, style=myCSS.global_layout)
 
 ############################################
 ## II.b) callback to update visualization ##

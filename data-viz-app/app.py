@@ -2,10 +2,12 @@ import os
 import io
 import sys
 import json
+import base64
 import pandas as pd
 from pathlib import Path
 
 import dash
+from dash.exceptions import PreventUpdate
 from dash import Dash, dcc, html, dash_table
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
@@ -20,6 +22,10 @@ from utils.load_and_clean_df import (
     load_data,
     clean_data
 )
+from utils.import_export import (
+    import_uploaded_pdf,
+    export_table_to_excel
+)
 from utils.dash_filtering import (
     create_accordion_item, 
     filter_df, 
@@ -27,7 +33,6 @@ from utils.dash_filtering import (
 )
 from utils.dash_figures import (
     create_combined_pie_chart,
-    create_sentiment_trend_line,
     create_sentiment_trend_area,
     create_geographic_distribution_map,
     create_wordcloud
@@ -39,7 +44,7 @@ import assets.css.styles as myCSS
 DASH_APP_URL = 'localhost'
 DASH_APP_PORT = 8050
 
-# availables : ['combined-pie-chart', 'geographic-distribution', 'sentiment-trend-line', 'sentiment-trend-area', 'word-cloud']
+# availables : ['combined-pie-chart', 'geographic-distribution', 'sentiment-trend-area', 'word-cloud']
 DATA_GRID = [
     ['combined-pie-chart', 'sentiment-trend-area'],
     ['word-cloud', 'geographic-distribution'],
@@ -99,12 +104,22 @@ def generate_grid_layout(grid):
     return grid_layout
 
 dash_app.layout = dbc.Container([
+
     # Header
     dbc.Row([
         dbc.Col(html.Img(src='assets/img/enedis-logo.svg', height='60px'), width='auto', className='d-flex align-items-center justify-content-start'),
         dbc.Col(html.H1("Analyse des reportings Enedis", className='text-center mb-5 mt-3'), style=myCSS.title, width=True, className='d-flex justify-content-center'),
         dbc.Col(html.Img(src='assets/img/enedis-eolienne.svg', height='180px'), width='auto', className='d-flex align-items-center justify-content-start'),
         dbc.Col(html.Img(src='assets/img/hackathon-GenAI.png', height='60px'), width='auto', className='d-flex align-items-center justify-content-start')
+    ], align='center', className='mb-4'),
+
+    # Import Button
+    dbc.Row([
+        dbc.Col(dcc.Upload(
+            id='upload-pdf',
+            children=html.Button('Importer PDF', className='btn btn-primary'),
+            multiple=True,
+        ), width='auto', className='d-flex align-items-center justify-content-start'),
     ], align='center', className='mb-4'),
 
     # Search Bar
@@ -144,7 +159,7 @@ dash_app.layout = dbc.Container([
     # Data Table
     html.Div([
         html.Div([
-            html.Button('Export Excel', id='export-button', n_clicks=0, style=myCSS.export_button)
+            html.Button('Exporter Excel', id='export-button', n_clicks=0, className='btn btn-primary')
         ], style={'padding': '10px'}),
         dcc.Download(id="download-dataframe-xlsx"),
         dash_table.DataTable(
@@ -220,10 +235,6 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
         geographic_distribution = create_geographic_distribution_map(filtered_df, style=myCSS.geographic_distribution, geojson=FRANCE_GEOJSON)
         figures['geographic-distribution'] = geographic_distribution
 
-    if 'sentiment-trend-line' in grid_items:
-        sentiment_trend_line = create_sentiment_trend_line(filtered_df, style=myCSS.sentiment_trend)
-        figures['sentiment-trend-line'] = sentiment_trend_line
-
     if 'sentiment-trend-area' in grid_items:
         sentiment_trend_area = create_sentiment_trend_area(filtered_df, style=myCSS.sentiment_trend)
         figures['sentiment-trend-area'] = sentiment_trend_area
@@ -240,9 +251,9 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
     return values_to_return
 
 
-###############################################
-## II.c) callback to download the data table ##
-###############################################
+#######################################################
+## II.c) callbacks for imports (pdf) / export (xlsx) ##
+#######################################################
 
 @dash_app.callback(
     Output("download-dataframe-xlsx", "data"),
@@ -250,21 +261,18 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
     Input('data-table', 'data'),
     prevent_initial_call=True
 )
-def export_table_to_excel(n_clicks, table_data):
-    if n_clicks is None or n_clicks == 0 or not table_data:
-        return dash.no_update
+def handle_xlsx_export(n_clicks, table_data):
+    return export_table_to_excel(n_clicks, table_data)
 
-    # convert the data back to a DataFrame
-    export_df = pd.DataFrame(table_data)
-    
-    # write it to xlsx file in memory
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        export_df.to_excel(writer, index=False, sheet_name='Sheet1')
-    output.seek(0)
 
-    # prepare the file for download
-    return dcc.send_bytes(output.read(), "data_table.xlsx")
+@dash_app.callback(
+    Output('upload-pdf', 'children'),
+    Input('upload-pdf', 'contents'),
+    Input('upload-pdf', 'filename'),
+    prevent_initial_call=True
+)
+def handle_pdf_import(contents, filenames):
+    return import_uploaded_pdf(contents, filenames)
 
 
 ###################

@@ -135,44 +135,7 @@ def create_sentiment_trend_area(filtered_df, style):
         template="plotly_white"
     )
 
-    return fig
-
-def create_sentiment_trend_line(filtered_df, style):
-    # group values based on mapping
-    filtered_df['Tonalité'] = filtered_df['Qualité du retour'].map(style['group_mapping'])
-
-    # aggregate data by grouped sentiment and date
-    sentiment_trend = (
-        filtered_df.groupby(['Date', 'Tonalité'])
-        .size()
-        .reset_index(name='Count')
-    )
-
-    # multi-line chart with one line per sentiment category
-    fig = px.line(
-        sentiment_trend, 
-        x='Date', 
-        y='Count', 
-        color='Tonalité',
-        title="📈 Évolution des tonalités au fil du temps",
-        color_discrete_map=style['color_mapping'],
-        markers=True
-    )
-
-    fig.update_layout(
-        title_font=dict(size=20),
-        xaxis_title="Date",
-        yaxis_title="Nombre d'articles",
-        legend_title="Tonalité",
-        template="xgridoff",
-        hovermode="x unified",
-        margin=dict(l=40, r=40, t=60, b=40)
-    )
-
-    # Improve line appearance
-    fig.update_traces(line=dict(width=2), marker=dict(size=6))
-    
-    return fig
+    return fig 
 
 
 

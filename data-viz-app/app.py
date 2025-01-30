@@ -1,10 +1,11 @@
 import os
+import io
 import sys
 import json
 import pandas as pd
 from pathlib import Path
 
-import plotly.express as px
+import dash
 from dash import Dash, dcc, html, dash_table
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
@@ -142,6 +143,10 @@ dash_app.layout = dbc.Container([
 
     # Data Table
     html.Div([
+        html.Div([
+            html.Button('Export Excel', id='export-button', n_clicks=0, style=myCSS.export_button)
+        ], style={'padding': '10px'}),
+        dcc.Download(id="download-dataframe-xlsx"),
         dash_table.DataTable(
             id='data-table',
             columns=[{"name": col, "id": col} for col in df.columns],
@@ -234,8 +239,36 @@ def update_visualizations(selected_themes, selected_tonalites, selected_territor
 
     return values_to_return
 
+
+###############################################
+## II.c) callback to download the data table ##
+###############################################
+
+@dash_app.callback(
+    Output("download-dataframe-xlsx", "data"),
+    Input("export-button", "n_clicks"),
+    Input('data-table', 'data'),
+    prevent_initial_call=True
+)
+def export_table_to_excel(n_clicks, table_data):
+    if n_clicks is None or n_clicks == 0 or not table_data:
+        return dash.no_update
+
+    # convert the data back to a DataFrame
+    export_df = pd.DataFrame(table_data)
+    
+    # write it to xlsx file in memory
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        export_df.to_excel(writer, index=False, sheet_name='Sheet1')
+    output.seek(0)
+
+    # prepare the file for download
+    return dcc.send_bytes(output.read(), "data_table.xlsx")
+
+
 ###################
-## II.c) run app ##
+## II.d) run app ##
 ###################
 
 if __name__ == '__main__':

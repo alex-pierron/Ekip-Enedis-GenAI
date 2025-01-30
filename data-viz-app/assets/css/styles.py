@@ -100,6 +100,15 @@ wordcloud = {
     'backgroundColor': 'white',
 }
 
+export_button = {
+    'background-color': '#0f53b9',  
+    'color': 'white',   
+    'fontWeight': 'bold',           
+    'border': 'none',              
+    'font-size': '16px',
+    'cursor': 'pointer',
+}
+
 data_table = {
     'page_size': 20,
 

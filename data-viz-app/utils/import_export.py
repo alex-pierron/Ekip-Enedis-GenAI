@@ -95,6 +95,6 @@ def import_uploaded_pdf_to_s3(contents, filenames, bucket_name, output_folder=''
         except NoCredentialsError:
             return html.Button("Erreur : Aucun identifiant AWS trouvé.", className='btn btn-danger')
         except Exception as e:
-            return html.Button(f"Erreur lors de l'importation : {str(e)}", className='btn btn-danger')
+            return html.Button(f"Erreur : {str(e)}", className='btn btn-danger')
 
     return html.Button(success_str, className='btn btn-success')

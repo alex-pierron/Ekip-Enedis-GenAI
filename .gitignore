@@ -6,6 +6,8 @@ __pycache__/
 # Ignore virtual environment directories
 venv/
 .venv/
+env/
+.env
 
 # Ignore other common unnecessary files
 *.log
@@ -17,3 +19,4 @@ venv/
 # Ignore IDE config files (e.g., VSCode, PyCharm)
 .vscode/
 .idea/
+

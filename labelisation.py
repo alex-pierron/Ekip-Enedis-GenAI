@@ -1,6 +1,13 @@
 import json
 import boto3 #API AWS 
 from botocore.exceptions import ClientError
+import os
+from dotenv import load_dotenv
+
+load_dotenv('.env')
+
+aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
+aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
 
 
 session = boto3.Session(

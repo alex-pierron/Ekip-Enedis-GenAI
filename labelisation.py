@@ -2,20 +2,17 @@ import json
 import boto3 #API AWS 
 from botocore.exceptions import ClientError
 import os
-from dotenv import load_dotenv
+import pymysql
 
-load_dotenv('.env')
+os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
 
 class TextLabelisation:
     def __init__(self, aws_access_key_id, aws_secret_access_key, model_id):
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
-        self.session = boto3.Session(
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
-            region_name="us-west-2"
-        )
+        self.session = boto3.Session()
         self.bedrock = self.session.client(service_name="bedrock-runtime")
+        self.rds = self.session.client(service_name="rds")
         self.model_id = model_id #"mistral.mistral-large-2402-v1:0"
     
     def __model__(self):
@@ -32,29 +29,29 @@ class TextLabelisation:
         ]
 
         response = self.bedrock.converse(
-        modelId=self.model_id,
-        messages=messages,
-        inferenceConfig={
-            "maxTokens": 512,
-            "temperature": 0,
-        },
-        toolConfig=
-        {
-            "tools": self.__getTool__(),
-            "toolChoice":{"any": {}}
-        }
-    )
+            modelId=self.model_id,
+            messages=messages,
+            inferenceConfig={
+                "maxTokens": 512,
+                "temperature": 0,
+            },
+            toolConfig=
+            {
+                "tools": self.__getTool__(),
+                "toolChoice":{"any": {}}
+            }
+        )
         
         output = self.__parse_response__(response)
+        output = self.__factuel_treshold__(output)
         return output
-
 
     def __create_content__(self, article):
         date = article["date"]
-        territory = article["territory"]
-        title = article["title"]
+        territory = article["territoire"]
+        title = article["sujet"]
         media = article["media"]
-        content = article["content"]
+        content = article["article"]
 
         return f"""
         <article>
@@ -109,42 +106,101 @@ class TextLabelisation:
             }
         ]
         return tool_list
-    
+
     def __parse_response__(self, response):
-        response_message = response['output']['message']
-        response_content_blocks = response_message['content']
-        content_block = next((block for block in response_content_blocks if 'toolUse' in block), None)
-        tool_use_block = content_block['toolUse']
-        tool_result_dict = tool_use_block['input']
+        response_message = response["output"]["message"]
+        response_content_blocks = response_message["content"]
+        content_block = next((block for block in response_content_blocks if "toolUse" in block), None)
+        tool_use_block = content_block["toolUse"]
+        tool_result_dict = tool_use_block["input"]
+        tool_result_dict["sentiment"] = tool_result_dict.pop("overall_sentiment")
+        tool_result_dict["factuel"] = tool_result_dict.pop("factuel_checker")
         return tool_result_dict
-
     
+    def __factuel_treshold__(self, output):
+        if output["sentiment"] == "NEUTRAL":
+            output["nuance"] = False
+        else:
+            if output["confident_score"] > 0.5:
+                output["nuance"] = False
+            else:
+                output["nuance"] = True
+        output.pop("confident_score")
+        return output
 
+class Helper:
+    def __init__(self, rds):
+        self.rds = rds
 
+    def merge_dict(self, article, classifications):
+        return article | classifications
+    
+    def send_to_SQL(self, dict_output):
+        database = self.__database_information__()
+        db =  pymysql.connect(host=database["ENDPOINT"], user=database["USER"], password=database["PASSWORD"], port=database["PORT"], database=database["DBNAME"])
+        table_name = os.environ.get("RDS_TABLE_NAME")
+        columns = ", ".join(dict_output.keys())
+        placeholders = ", ".join(["%s"] * len(dict_output))
+        sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+        try:
+            cursor = db.cursor()
+            cursor.execute(sql, tuple(dict_output.values()))
+            db.commit() 
+            print("Data sent to SQL successfully.")
+        except Exception as e:
+            print("Error sending data to SQL:", e)
+            db.rollback() 
+        finally:
+            cursor.close()
+            db.close()
 
+    def __database_information__(self):
+        return {
+            "ENDPOINT": os.environ.get("RDS_ENDPOINT"),
+            "USER": os.environ.get("RDS_USER"),
+            "PORT": int(os.environ.get("RDS_PORT")),
+            "PASSWORD": os.environ.get("RDS_PASSWORD"),
+            "DBNAME": os.environ.get("RDS_DBNAME")
+        }
 
+def lambda_handler(event, context):
+    fake_article = event['body']
+    aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
+    aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
 
-fake_article = {
-    "date": "2022-01-01",
-    "territory": "France",
-    "title": "Un nouveau projet de loi sur la transition écologique",
-    "media": "Le Monde",
-    "content": "Le gouvernement a annoncé un nouveau projet de loi sur la transition écologique. Ce projet de loi vise à réduire les émissions de gaz à effet de serre et à promouvoir les énergies renouvelables. Il prévoit également des mesures pour lutter contre la pollution de l'air et de l'eau. Le projet de loi a été salué par les associations environnementales, qui le jugent ambitieux et nécessaire pour atteindre les objectifs de l'accord de Paris sur le climat."
+    try:
+        labelisation = TextLabelisation(aws_access_key_id, aws_secret_access_key, "mistral.mistral-large-2402-v1:0")
+        print("LLM model used: ", labelisation.__model__())
+        output = labelisation.forward(fake_article)
+    except ClientError as e:
+        print("Error during the labelisation process: ", e)
+
+    try:
+        helper = Helper(labelisation.rds)
+        merged_dict = helper.merge_dict(fake_article, output)
+    except Exception as e:
+        print("Error during merging the article data and the LLM classification: ", e)
+
+    try:
+        helper.send_to_SQL(merged_dict)
+    except Exception as e:
+        print("Error during the data sending process to SQL: ", e)
+
+    return {
+        "status": 200,
+    }
+"""Event example:
+{
+    "body":{
+        "date": "2022-01-01",
+        "territoire": "France",
+        "sujet": "Un nouveau projet de loi sur la transition écologique",
+        "nb_articles" : 1,
+        "media": "Le Monde",
+        "article": "Le gouvernement a annoncé un nouveau projet de loi sur la transition écologique. Ce projet de loi vise à réduire les émissions de gaz à effet de serre et à promouvoir les énergies renouvelables. Il prévoit également des mesures pour lutter contre la pollution de l'air et de l'eau. Le projet de loi a été salué par les associations environnementales, qui le jugent ambitieux et nécessaire pour atteindre les objectifs de l'accord de Paris sur le climat."
+    }
 }
 
-aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
-aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
-try:
-    labelisation = TextLabelisation(aws_access_key_id, aws_secret_access_key, "mistral.mistral-large-2402-v1:0")
-    print("LLM model used: ", labelisation.__model__())
-    output = labelisation.forward(fake_article)
-    print(output)
-except ClientError as e:
-    print("Error during the labelisation process: ", e)
-
-
-
-
-
+"""
 
 

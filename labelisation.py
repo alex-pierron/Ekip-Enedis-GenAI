@@ -54,6 +54,12 @@ tool_list = [
                             "description": "The article overall sentiment.",
                             "enum": ["POSITIVE", "NEUTRAL", "NEGATIVE"],
                         },
+                        "confident_score": {
+                            "type": "number",
+                            "description": "A confident score about the overall sentiment guess.",
+                            "minimum": 0.0,
+                            "maximum": 1.0,
+                        },
                         "factuel_checker": {
                             "type": "boolean",
                             "description": "Check if the article is factuel.",
@@ -67,7 +73,8 @@ tool_list = [
                     "required": [
                         "overall_sentiment",
                         "factuel_checker",
-                        "theme"
+                        "theme",
+                        "confident_score",
                     ]
                 }
             }

@@ -47,9 +47,20 @@ tool_list = [
                             "description": "The article overall sentiment.",
                             "enum": ["POSITIVE", "NEUTRAL", "NEGATIVE"],
                         },
+                        "factuel_checker": {
+                            "type": "boolean",
+                            "description": "Check if the article is factuel.",
+                        },
+                        "theme": {
+                            "type": "string",
+                            "description": "The principal theme of the overall sentiment.",
+                            "enum": ['aleas climatiques', 'client', 'divers', 'greves', 'innovation', 'linky', 'marque employeur/rh', 'mobilite electrique', 'partenariats industriels/academiques', 'prevention', 'raccordement', 'reseau', 'rh', 'rh/partenariat/rse', 'rse', 'transition ecologique']
+                        },
                     },
                     "required": [
                         "overall_sentiment",
+                        "factuel_checker",
+                        "theme"
                     ]
                 }
             }

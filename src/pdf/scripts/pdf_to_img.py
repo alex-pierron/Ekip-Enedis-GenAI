@@ -66,7 +66,7 @@ def extract_text_from_images(page_num, src_filepath, dst_dir=os.path.dirname(__f
     ----------
     page_num (int): The page number (1-based index) to analyze.
     src_filepath (str): The file path of the source PDF.
-    dst_dir (str, optional): The destination directory for saving extracted images. 
+    dst_dir (str, optional): The destination directory for saving extracted images.
                              Default is the script's directory.
 
     Returns:
@@ -95,4 +95,3 @@ def extract_text_from_images(page_num, src_filepath, dst_dir=os.path.dirname(__f
         text = pytesseract.image_to_string(img).strip()
         if text:
             print(f"Text extracted from image {i}:\n{text}\n")
-

@@ -4,7 +4,15 @@ from dash import dcc
 import dash_bootstrap_components as dbc
 from utils.shared_utils import normalize_text
 
-def create_accordion_item(df: pd.DataFrame, title: str, id: str, multi: bool = True, style: dict = None, ordered_values: list = None) -> dbc.AccordionItem:
+
+def create_accordion_item(
+    df: pd.DataFrame,
+    title: str,
+    id: str,
+    multi: bool = True,
+    style: dict = None,
+    ordered_values: list = None,
+) -> dbc.AccordionItem:
     """
     Creates an accordion item with a dropdown filter for a specific column in a DataFrame.
 
@@ -24,22 +32,36 @@ def create_accordion_item(df: pd.DataFrame, title: str, id: str, multi: bool = T
 
     # Sort options by an ordered list if provided, otherwise alphabetically
     if ordered_values:
-        sorted_options = sorted(options, key=lambda option: ordered_values.index(option) if option in ordered_values else float('inf'))
+        sorted_options = sorted(
+            options,
+            key=lambda option: ordered_values.index(option)
+            if option in ordered_values
+            else float("inf"),
+        )
     else:
         sorted_options = sorted(options)
 
     # Create the accordion item with the dropdown
-    accordion_item = dbc.AccordionItem([
-        dcc.Dropdown(
-            id=f"{id}-dropdown",
-            options=[{'label': option, 'value': option} for option in sorted_options],
-            placeholder=f"Sélectionnez un ou plusieurs {title.lower()}s" if id != 'tonalite' else "Sélectionnez une ou plusieurs qualités du retour",
-            multi=multi,
-            style=style or {'margin-bottom': '10px'}
-        ),
-    ], title=f"Filtrer par {title}", id=f"{id}-title")
-    
+    accordion_item = dbc.AccordionItem(
+        [
+            dcc.Dropdown(
+                id=f"{id}-dropdown",
+                options=[
+                    {"label": option, "value": option} for option in sorted_options
+                ],
+                placeholder=f"Sélectionnez un ou plusieurs {title.lower()}s"
+                if id != "tonalite"
+                else "Sélectionnez une ou plusieurs qualités du retour",
+                multi=multi,
+                style=style or {"margin-bottom": "10px"},
+            ),
+        ],
+        title=f"Filtrer par {title}",
+        id=f"{id}-title",
+    )
+
     return accordion_item
+
 
 def filter_df(df: pd.DataFrame, filters: list) -> pd.DataFrame:
     """
@@ -57,21 +79,25 @@ def filter_df(df: pd.DataFrame, filters: list) -> pd.DataFrame:
 
     # Apply filters to the DataFrame
     if theme:
-        df = df[df['Thème'].isin(theme)]
+        df = df[df["Thème"].isin(theme)]
     if tonalite:
-        df = df[df['Qualité du retour'].isin(tonalite)]
+        df = df[df["Qualité du retour"].isin(tonalite)]
     if territory:
-        df = df[df['Territoire'].isin(territory)]
+        df = df[df["Territoire"].isin(territory)]
     if media:
-        df = df[df['Média'].isin(media)]
+        df = df[df["Média"].isin(media)]
     if start_date and end_date:
-        df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
+        df = df[(df["Date"] >= start_date) & (df["Date"] <= end_date)]
 
     # If keywords are provided, filter based on matching keywords in 'Sujet' or 'Article'
     if keywords and keywords.strip():
         # Split keywords by comma, space, or semicolon and normalize the text
-        keywords_list = [normalize_text(kw) for kw in re.split(r'[,\s;]+', keywords.strip()) if kw.strip()]
-        
+        keywords_list = [
+            normalize_text(kw)
+            for kw in re.split(r"[,\s;]+", keywords.strip())
+            if kw.strip()
+        ]
+
         # Filter rows where all keywords are present in either 'Sujet' or 'Article'
         def contains_all_keywords(row):
             combined_text = normalize_text(f"{row['Sujet']} {row['Article']}")
@@ -80,6 +106,7 @@ def filter_df(df: pd.DataFrame, filters: list) -> pd.DataFrame:
         df = df[df.apply(contains_all_keywords, axis=1)]
 
     return df
+
 
 def summary_filter(column: str, selected_values: list) -> str:
     """
@@ -100,5 +127,5 @@ def summary_filter(column: str, selected_values: list) -> str:
             summary = f"Filtrer par {column}: {', '.join(selected_values[:3])}..."
     else:
         summary = f"Filtrer par {column}"
-    
+
     return summary

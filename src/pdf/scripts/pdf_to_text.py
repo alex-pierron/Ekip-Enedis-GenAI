@@ -10,8 +10,8 @@ def extract_articles_from_pdf(pdf_path, dossier=False):
     Arguments:
     ----------
     pdf_path (str): The path to the PDF file to be processed.
-    dossier (bool): 
-        - If True, ignores pages before the first occurrence of "DR Nord-Pas-de-Calais" 
+    dossier (bool):
+        - If True, ignores pages before the first occurrence of "DR Nord-Pas-de-Calais"
           and includes only relevant pages after that point.
         - If False (default), all pages are included.
 
@@ -21,9 +21,9 @@ def extract_articles_from_pdf(pdf_path, dossier=False):
 
     Description:
     ------------
-    This function scans the pages of a PDF file, extracts the text from each page, 
-    and groups pages into articles. 
-    - If `dossier=True`, extraction starts after the first occurrence of 
+    This function scans the pages of a PDF file, extracts the text from each page,
+    and groups pages into articles.
+    - If `dossier=True`, extraction starts after the first occurrence of
       "DR Nord-Pas-de-Calais" or another relevant non-empty page.
     - Articles are identified and separated using the keyword **"Parution"** as a delimiter.
     """
@@ -39,11 +39,9 @@ def extract_articles_from_pdf(pdf_path, dossier=False):
 
             if page_text.strip() == "DR Nord-Pas-de-Calais":
                 found_first_article = True
-                continue  
+                continue
 
-            elif (
-                found_first_article
-            ):  
+            elif found_first_article:
                 pages_text.append(page_text)
     else:
         for page_num in range(len(reader.pages)):
@@ -87,7 +85,7 @@ def extract_date_from_text(text):
 
     Description:
     ------------
-    Uses a regular expression to search for a date in full format 
+    Uses a regular expression to search for a date in full format
     (day of the week, day, month, year). Converts the month name to its numeric format.
 
     Example:
@@ -100,7 +98,6 @@ def extract_date_from_text(text):
     match = re.search(date_pattern, text)
 
     if match:
-
         day, month, year = match.groups()
 
         months = {
@@ -118,14 +115,11 @@ def extract_date_from_text(text):
             "décembre": "12",
         }
 
-
         month_num = months.get(month.lower())
 
         if month_num:
-
             date_str = f"{month_num}/{int(day):02d}/{year}"
 
-            
             return date_str
 
     return None
@@ -150,7 +144,7 @@ def check_media_in_text(text):
     --------
     list:
         - A list containing the names of detected media sources.
-        - If "Tous droits réservés" appears **before** any media mention, 
+        - If "Tous droits réservés" appears **before** any media mention,
           returns `["Tous droits réservés"]`.
         - If no media is found, returns an empty list `[]`.
 
@@ -174,14 +168,14 @@ def check_media_in_text(text):
 
     reserved_rights_variations = [
         "tous droits réservés",
-        "t ous droits réservés", 
-        "tous droits reserve",  
-        "tous droits réservée",  
-        "tous droit réservé",  
-        "tous droit réservés",  
-        "© tous droits réservés",  
+        "t ous droits réservés",
+        "tous droits reserve",
+        "tous droits réservée",
+        "tous droit réservé",
+        "tous droit réservés",
+        "© tous droits réservés",
         "(c) tous droits réservés",
-        "tous droits réservés.",  
+        "tous droits réservés.",
         "tous droits réservés :",
     ]
 
@@ -195,16 +189,15 @@ def check_media_in_text(text):
 
     found_media = []
 
-    
     for media, variations in media_dict.items():
         for variation in variations:
             variation_lower = variation.lower()
             index = text_lower.find(variation_lower)
 
-            if index != -1:  
+            if index != -1:
                 if reserved_rights_index != -1 and index > reserved_rights_index:
                     return ["Tous droits réservés"]
                 found_media.append(media)
-                break  
+                break
 
-    return found_media 
+    return found_media

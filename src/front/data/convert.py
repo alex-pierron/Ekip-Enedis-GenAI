@@ -1,12 +1,13 @@
 import pandas as pd
 import os
 
+
 def xlsx_to_csv(input_file, output_file=None):
     """
     Converts an Excel file (.xlsx) to a CSV file.
 
     :param input_file: Path to the input Excel file.
-    :param output_file: Path to the output CSV file. If not provided, 
+    :param output_file: Path to the output CSV file. If not provided,
                         the CSV will be saved in the same directory as the input file.
     """
     try:
@@ -29,13 +30,15 @@ def xlsx_to_csv(input_file, output_file=None):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+
 # Example usage
 if __name__ == "__main__":
     input_path = input("Enter the path to the Excel file (.xlsx): ").strip()
-    output_path = input("Enter the path to save the CSV file (leave blank for default): ").strip()
-    
+    output_path = input(
+        "Enter the path to save the CSV file (leave blank for default): "
+    ).strip()
+
     # Pass None if the output path is blank
     output_path = output_path if output_path else None
 
     xlsx_to_csv(input_path, output_path)
-

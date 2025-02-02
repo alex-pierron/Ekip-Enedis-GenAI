@@ -1,10 +1,11 @@
 import json
-import boto3 #API AWS 
+import boto3  # API AWS
 from botocore.exceptions import ClientError
 import os
 import pymysql
 
-os.environ['LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN'] = '1'
+os.environ["LIBMYSQL_ENABLE_CLEARTEXT_PLUGIN"] = "1"
+
 
 class TextLabelisation:
     def __init__(self, aws_access_key_id, aws_secret_access_key, model_id):
@@ -13,17 +14,19 @@ class TextLabelisation:
         self.session = boto3.Session()
         self.bedrock = self.session.client(service_name="bedrock-runtime")
         self.rds = self.session.client(service_name="rds")
-        self.model_id = model_id #"mistral.mistral-large-2402-v1:0"
-    
+        self.model_id = model_id  # "mistral.mistral-large-2402-v1:0"
+
     def __model__(self):
         return self.model_id
-    
+
     def forward(self, article):
         messages = [
             {
                 "role": "user",
                 "content": [
-                    { "text": f"You have to use the sentiment_checker tool to classify the sentiment on the content within the <article> tags.\n\n {self.__create_content__(article)}" }
+                    {
+                        "text": f"You have to use the sentiment_checker tool to classify the sentiment on the content within the <article> tags.\n\n {self.__create_content__(article)}"
+                    }
                 ],
             }
         ]
@@ -35,13 +38,9 @@ class TextLabelisation:
                 "maxTokens": 512,
                 "temperature": 0,
             },
-            toolConfig=
-            {
-                "tools": self.__getTool__(),
-                "toolChoice":{"any": {}}
-            }
+            toolConfig={"tools": self.__getTool__(), "toolChoice": {"any": {}}},
         )
-        
+
         output = self.__parse_response__(response)
         output = self.__factuel_treshold__(output)
         return output
@@ -62,7 +61,7 @@ class TextLabelisation:
         <content>{content}</content>
         </article>
         """
-    
+
     def __getTool__(self):
         tool_list = [
             {
@@ -91,7 +90,24 @@ class TextLabelisation:
                                 "theme": {
                                     "type": "string",
                                     "description": "The principal theme of the overall sentiment.",
-                                    "enum": ['aleas climatiques', 'client', 'divers', 'greves', 'innovation', 'linky', 'marque employeur/rh', 'mobilite electrique', 'partenariats industriels/academiques', 'prevention', 'raccordement', 'reseau', 'rh', 'rh/partenariat/rse', 'rse', 'transition ecologique']
+                                    "enum": [
+                                        "aleas climatiques",
+                                        "client",
+                                        "divers",
+                                        "greves",
+                                        "innovation",
+                                        "linky",
+                                        "marque employeur/rh",
+                                        "mobilite electrique",
+                                        "partenariats industriels/academiques",
+                                        "prevention",
+                                        "raccordement",
+                                        "reseau",
+                                        "rh",
+                                        "rh/partenariat/rse",
+                                        "rse",
+                                        "transition ecologique",
+                                    ],
                                 },
                             },
                             "required": [
@@ -99,9 +115,9 @@ class TextLabelisation:
                                 "confident_score",
                                 "factuel_checker",
                                 "theme",
-                            ]
+                            ],
                         }
-                    }
+                    },
                 }
             }
         ]
@@ -110,13 +126,15 @@ class TextLabelisation:
     def __parse_response__(self, response):
         response_message = response["output"]["message"]
         response_content_blocks = response_message["content"]
-        content_block = next((block for block in response_content_blocks if "toolUse" in block), None)
+        content_block = next(
+            (block for block in response_content_blocks if "toolUse" in block), None
+        )
         tool_use_block = content_block["toolUse"]
         tool_result_dict = tool_use_block["input"]
         tool_result_dict["sentiment"] = tool_result_dict.pop("overall_sentiment")
         tool_result_dict["factuel"] = tool_result_dict.pop("factuel_checker")
         return tool_result_dict
-    
+
     def __factuel_treshold__(self, output):
         if output["sentiment"] == "NEUTRAL":
             output["nuance"] = False
@@ -128,16 +146,23 @@ class TextLabelisation:
         output.pop("confident_score")
         return output
 
+
 class Helper:
     def __init__(self, rds):
         self.rds = rds
 
     def merge_dict(self, article, classifications):
         return article | classifications
-    
+
     def send_to_SQL(self, dict_output):
         database = self.__database_information__()
-        db =  pymysql.connect(host=database["ENDPOINT"], user=database["USER"], password=database["PASSWORD"], port=database["PORT"], database=database["DBNAME"])
+        db = pymysql.connect(
+            host=database["ENDPOINT"],
+            user=database["USER"],
+            password=database["PASSWORD"],
+            port=database["PORT"],
+            database=database["DBNAME"],
+        )
         table_name = os.environ.get("RDS_TABLE_NAME")
         columns = ", ".join(dict_output.keys())
         placeholders = ", ".join(["%s"] * len(dict_output))
@@ -145,11 +170,11 @@ class Helper:
         try:
             cursor = db.cursor()
             cursor.execute(sql, tuple(dict_output.values()))
-            db.commit() 
+            db.commit()
             print("Data sent to SQL successfully.")
         except Exception as e:
             print("Error sending data to SQL:", e)
-            db.rollback() 
+            db.rollback()
         finally:
             cursor.close()
             db.close()
@@ -160,16 +185,19 @@ class Helper:
             "USER": os.environ.get("RDS_USER"),
             "PORT": int(os.environ.get("RDS_PORT")),
             "PASSWORD": os.environ.get("RDS_PASSWORD"),
-            "DBNAME": os.environ.get("RDS_DBNAME")
+            "DBNAME": os.environ.get("RDS_DBNAME"),
         }
 
+
 def lambda_handler(event, context):
-    fake_article = event['body']
+    fake_article = event["body"]
     aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
     aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
 
     try:
-        labelisation = TextLabelisation(aws_access_key_id, aws_secret_access_key, "mistral.mistral-large-2402-v1:0")
+        labelisation = TextLabelisation(
+            aws_access_key_id, aws_secret_access_key, "mistral.mistral-large-2402-v1:0"
+        )
         print("LLM model used: ", labelisation.__model__())
         output = labelisation.forward(fake_article)
     except ClientError as e:
@@ -189,6 +217,8 @@ def lambda_handler(event, context):
     return {
         "status": 200,
     }
+
+
 """Event example:
 {
     "body":{
@@ -202,5 +232,3 @@ def lambda_handler(event, context):
 }
 
 """
-
-

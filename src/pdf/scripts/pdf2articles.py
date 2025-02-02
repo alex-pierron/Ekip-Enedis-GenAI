@@ -26,8 +26,8 @@ def extract_pages(input_pdf_path, output_pdf_path, start_page, end_page):
 
 def extract_article_page_ranges_from_pdf(pdf_path):
     """
-    Extracts the page ranges of articles from a PDF file. 
-    It starts after the first page containing 'DR Nord-Pas-de-Calais' 
+    Extracts the page ranges of articles from a PDF file.
+    It starts after the first page containing 'DR Nord-Pas-de-Calais'
     and uses the 'Parution' marker to identify articles.
 
     Parameters:
@@ -69,16 +69,20 @@ def extract_articles_as_pdf(input_pdf_path, output_dir):
     article_page_ranges = extract_article_page_ranges_from_pdf(input_pdf_path)
 
     for i, (start_page, end_page) in enumerate(article_page_ranges):
-        output_pdf_path = os.path.join(output_dir, f"article_{i}.pdf")
+        output_pdf_path = os.path.join(output_dir, f"article{i}.pdf")
         extract_pages(input_pdf_path, output_pdf_path, start_page, end_page)
 
 
 if __name__ == "__main__":
-    input_pdf = "./pdf/data/Revue-Médias - DR Nord-Pas-de-Calais du 02012025.pdf"
-    output_dir = "./pdf/data/articles"
+    # Example usage
+    src_dir = "./pdf/data/"  # Path to the input PDF
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    for i, file in enumerate(os.listdir(src_dir)):
+        # Create the output directory if it doesn't exist
+        filepath = os.path.join(src_dir, file)
+        output_dir = f"./pdf/pdf{i}"  # Directory to save the extracted articles
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
-    extract_articles_as_pdf(input_pdf, output_dir)
-
+        print(f"Processing file: {filepath}")
+        extract_articles_as_pdf(filepath, output_dir)

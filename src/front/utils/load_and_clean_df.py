@@ -2,7 +2,10 @@ import pymysql
 import pandas as pd
 from utils.shared_utils import normalize_text
 
-def fetch_table_as_df(host: str, user: str, password: str, db_name: str, table_name: str) -> pd.DataFrame:
+
+def fetch_table_as_df(
+    host: str, user: str, password: str, db_name: str, table_name: str
+) -> pd.DataFrame:
     """
     Fetches data from a MySQL database table and returns it as a pandas DataFrame.
 
@@ -15,16 +18,11 @@ def fetch_table_as_df(host: str, user: str, password: str, db_name: str, table_n
 
     Returns:
         pd.DataFrame: A DataFrame containing the table data.
-    
+
     Raises:
         pymysql.MySQLError: If an error occurs while interacting with the MySQL database.
     """
-    conn = pymysql.connect(
-        host=host,
-        user=user,
-        password=password,
-        connect_timeout=10
-    )
+    conn = pymysql.connect(host=host, user=user, password=password, connect_timeout=10)
     try:
         cursor = conn.cursor()
         cursor.execute(f"USE {db_name};")
@@ -51,7 +49,7 @@ def fetch_table_as_df(host: str, user: str, password: str, db_name: str, table_n
 
 def standardize_columns(df: pd.DataFrame, columns_to_fix: list) -> pd.DataFrame:
     """
-    Standardizes the values in the specified columns by normalizing the text and 
+    Standardizes the values in the specified columns by normalizing the text and
     replacing values with the most frequent occurrence for each normalized value.
 
     Args:
@@ -63,8 +61,10 @@ def standardize_columns(df: pd.DataFrame, columns_to_fix: list) -> pd.DataFrame:
     """
     for col in columns_to_fix:
         # Normalize the values into a temporary column
-        df[f"{col}_normalized"] = df[col].apply(lambda x: normalize_text(x, keep_alphanum=True))
-        
+        df[f"{col}_normalized"] = df[col].apply(
+            lambda x: normalize_text(x, keep_alphanum=True)
+        )
+
         # Get the most frequent value for each normalized occurrence
         most_frequent_mapping = (
             df.groupby(f"{col}_normalized")[col]
@@ -79,6 +79,7 @@ def standardize_columns(df: pd.DataFrame, columns_to_fix: list) -> pd.DataFrame:
         df = df.drop(columns=[f"{col}_normalized"])
     return df
 
+
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     Cleans and processes the DataFrame by renaming columns, replacing specific values,
@@ -91,17 +92,17 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: A cleaned and transformed DataFrame.
     """
     # Drop unnecessary columns
-    df = df.drop(['id', 'nb_articles'], axis=1)
+    df = df.drop(["id", "nb_articles"], axis=1)
 
     # Replace values in the "factuel" and "nuance" columns with 'Oui' and 'Non'
-    df["factuel"] = df["factuel"].replace({0: 'Non', 1: 'Oui'})
-    df["nuance"] = df["nuance"].replace({0: 'Non', 1: 'Oui'})
+    df["factuel"] = df["factuel"].replace({0: "Non", 1: "Oui"})
+    df["nuance"] = df["nuance"].replace({0: "Non", 1: "Oui"})
 
     # Replace sentiment values with more readable terms
     sentiment_mapping = {
         "POSITIVE": "Positif",
         "NEGATIVE": "Négatif",
-        "NEUTRAL": "Neutre"
+        "NEUTRAL": "Neutre",
     }
     df["sentiment"] = df["sentiment"].map(sentiment_mapping)
 
@@ -120,13 +121,13 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.rename(columns=rename_dict)
 
     # Move the 'Article' column to the end
-    df["Article"] = df.pop("Article") 
+    df["Article"] = df.pop("Article")
 
     # Convert the "Date" column to datetime format
-    df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
-    
+    df["Date"] = pd.to_datetime(df["Date"], format="%d/%m/%Y")
+
     # Standardize values in the specified columns
-    columns_to_fix = ['Territoire', 'Thème', 'Média']
+    columns_to_fix = ["Territoire", "Thème", "Média"]
     df = standardize_columns(df, columns_to_fix)
 
     return df

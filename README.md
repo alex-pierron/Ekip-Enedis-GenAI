@@ -63,6 +63,10 @@ The extracted metadata includes key details such as the article's title, publica
 
 ### Frontend w/ DashBoard
 
+![Data Visualization Dashboard](/static/dashboard1.png)
+
+![Data Visualization Dashboard](/static/dashboard2.png)
+
 This project offers a sophisticated, interactive web-based dashboard developed with Python using the Dash framework and Plotly for data visualization. The dashboard connects to an AWS RDS MySQL database and dynamically retrieves reporting data related to Enedis. This tool is designed for data analysts, business intelligence professionals, and anyone looking to gain deeper insights into Enedis's data through graphical and tabular views.
 Features:
 

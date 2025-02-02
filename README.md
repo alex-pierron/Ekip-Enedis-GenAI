@@ -124,3 +124,8 @@ This management is primarily handled through IAM (Identity and Access Management
 ![architecture](/static/architecture.png)
 
 ## Data Analyse & Results 
+
+For the annotated data, the differences between the classes do not allow for maximum precision.
+This does not necessarily mean that our pipeline is flawed, but it prevents us from obtaining conclusive results.
+Indeed, the data bias, between the classes and human annotation, hinders an objective evaluation of our pipeline.
+

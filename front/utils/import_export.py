@@ -62,7 +62,7 @@ def import_uploaded_pdf_to_s3(
     contents: list[str], 
     filenames: list[str], 
     bucket_name: str = 's3-bucket-enedis', 
-    output_folder: str = 'full_pdf_test', 
+    output_folder: str = 'full_pdf', 
     aws_region: str = 'us-west-2'
 ) -> None:
     """

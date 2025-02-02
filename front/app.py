@@ -41,7 +41,7 @@ DATA_GRID = [
     ['word-cloud', 'geographic-distribution'],
 ]
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 ##################################################################
 
@@ -72,10 +72,8 @@ df = fetch_table_as_df(
     user=os.getenv("RDS_USER"),
     password=os.getenv("RDS_PASSWORD"),
     db_name=os.getenv("RDS_DB"),
-    table_name='media_enedis_bis'# os.getenv("RDS_TABLE")
+    table_name= os.getenv("RDS_TABLE")
 )
-
-# Clean the data (e.g., standardize column names, modify values)
 df = clean_data(df)
 
 ##########################
@@ -159,7 +157,7 @@ dash_app.layout = dbc.Container([
     # PDF import status store and interval for polling
     dcc.Store(id='pdf-import-store', data={'imported': 0}),
     dcc.Store(id='initial-pdf-import-status', data={'imported': 0}),
-    dcc.Interval(id='poll-interval', interval=2000, n_intervals=0),
+    dcc.Interval(id='poll-interval', interval=5000, n_intervals=0),
 
     # Search Bar for keywords
     dbc.Row([
@@ -214,9 +212,6 @@ dash_app.layout = dbc.Container([
         )
     ], style=myCSS.container)
 ], fluid=True, style=myCSS.global_layout)
-
-#reset_pdf_import_status()
-#print(pdf_import_status["imported"])
 
 ############################################
 ## II.b) Callback to Update Visualization ##

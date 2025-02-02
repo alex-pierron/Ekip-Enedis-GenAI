@@ -105,6 +105,11 @@ By automating these steps, the pipeline provides a seamless workflow that effici
 
 #### Roles
 
+AWS services use a role-based system that enables precise management of permissions for each object and service.
+Each service must be configured with the necessary roles for proper functionality.
+
+This management is primarily handled through IAM (Identity and Access Management), the permission manager, but also within the individual services (Lambda, SQS, S3, etc.).
+
 #### Architecture Summary
 
 ![architecture](/static/architecture.png)

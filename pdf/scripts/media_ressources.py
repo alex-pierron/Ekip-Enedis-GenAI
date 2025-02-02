@@ -1,7 +1,8 @@
 
 import re
 
-# Dictionnaire avec les médias et leurs variations (avec des apostrophes échappées)
+# Dictionary with media and their variations (with escaped apostrophes)
+
 media_dict = {
     'Nord Littoral': ['Nord Littoral', 'Nord Littoral ', "NORDLITTORAL"],
     'La Voix du Nord': ['La Voix du Nord', 'La voix du nord', 'La Voix du nord', 'La voix du Nord ', 'LAVOIXDUNORD'],

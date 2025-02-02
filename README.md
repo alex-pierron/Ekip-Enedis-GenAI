@@ -60,14 +60,14 @@ Finally, we noticed the presence of the variable `nb_articles`, which indicates 
 This project offers a sophisticated, interactive web-based dashboard developed with Python using the Dash framework and Plotly for data visualization. The dashboard connects to an AWS RDS MySQL database and dynamically retrieves reporting data related to Enedis. This tool is designed for data analysts, business intelligence professionals, and anyone looking to gain deeper insights into Enedis's data through graphical and tabular views.
 Features:
 
-    Keyword Search Functionality: This feature enables users to search for specific keywords within the dataset. The system will filter relevant records based on the keyword input, helping users quickly locate the data they need.
-    Filtering Options: Users can filter the data based on multiple criteria such as theme, sentiment, territory, media type, and date range. These filters allow for more targeted analysis and ensure that users can focus on the specific subsets of the data they are interested in.
-    Interactive Visualizations:
-        Combined Pie and Bar Charts: The dashboard displays combined pie and bar charts that represent media and sentiment distribution. This helps users understand the breakdown of data and the prevalence of different sentiments or media types across reports.
-        Sentiment Trend Chart: An interactive area chart visualizes the sentiment trends over time, offering a clear view of how sentiments have evolved across various periods.
-        Word Cloud: A dynamic word cloud is generated based on the dataset, displaying the most frequent words and phrases. This is particularly useful for text analysis and extracting key themes or subjects in the reports.
-        Geographic Distribution Map: A geographic map (using GeoJSON data for French regions) illustrates the distribution of data across various territories, allowing users to see trends based on location.
-    Tabular Data Display: A paginated data table presents the filtered data in a user-friendly format.
+- Keyword Search Functionality: This feature enables users to search for specific keywords within the dataset. The system will filter relevant records based on the keyword input, helping users quickly locate the data they need.
+- Filtering Options: Users can filter the data based on multiple criteria such as theme, sentiment, territory, media type, and date range. These filters allow for more targeted analysis and ensure that users can focus on the specific subsets of the data they are interested in.
+- Interactive Visualizations:
+        - Combined Pie and Bar Charts: The dashboard displays combined pie and bar charts that represent media and sentiment distribution. This helps users understand the breakdown of data and the prevalence of different sentiments or media types across reports.
+        - Sentiment Trend Chart: An interactive area chart visualizes the sentiment trends over time, offering a clear view of how sentiments have evolved across various periods.
+        - Word Cloud: A dynamic word cloud is generated based on the dataset, displaying the most frequent words and phrases. This is particularly useful for text analysis and extracting key themes or subjects in the reports.
+        - Geographic Distribution Map: A geographic map (using GeoJSON data for French regions) illustrates the distribution of data across various territories, allowing users to see trends based on location.
+    - Tabular Data Display: A paginated data table presents the filtered data in a user-friendly format.
 
 Additionally, the application has functionality to export the data as an Excel file (XLSX format). Users can also upload PDF files for processing, enriching the dataset with new information that can be visualized within the dashboard.
 
@@ -75,11 +75,11 @@ Additionally, the application has functionality to export the data as an Excel f
 
 This project's infrastructure leverages AWS services to facilitate seamless and scalable data processing. The solution is entirely serverless, ensuring scalability, low maintenance, and cost-efficiency.
 
-    S3 Bucket: The S3 bucket is used to store input PDF files as well as the data extracted from the AI pipeline. Once a PDF is uploaded, it is sent through various processing stages, and the extracted data is saved to S3 before being used to update the dashboard.
-    PDF Text Extraction: PDFs are processed through a text extraction service. The extracted text is then parsed for relevant data to be added to the dataset.
-    NOVA Light: NOVA Light is utilized to extract specific fields from the PDF documents. This step ensures that structured data, such as key metrics or data points, can be used directly in the dashboard, providing meaningful insights.
-    MISTRAL Large: This service performs sentiment analysis on the extracted text, classifying the data into different sentiment categories (positive, neutral, negative). The results are integrated into the dashboard for visualizing sentiment trends and distributions.
-    RDS MySQL: The AWS RDS MySQL database serves as the centralized storage for all structured data. This data is used to populate the dashboard’s visualizations and tables, ensuring the data is consistent, up-to-date, and ready for analysis.
+- S3 Bucket: The S3 bucket is used to store input PDF files as well as the data extracted from the AI pipeline. Once a PDF is uploaded, it is sent through various processing stages, and the extracted data is saved to S3 before being used to update the dashboard.
+    - PDF Text Extraction: PDFs are processed through a text extraction service. The extracted text is then parsed for relevant data to be added to the dataset.
+    - NOVA Light: NOVA Light is utilized to extract specific fields from the PDF documents. This step ensures that structured data, such as key metrics or data points, can be used directly in the dashboard, providing meaningful insights.
+    - MISTRAL Large: This service performs sentiment analysis on the extracted text, classifying the data into different sentiment categories (positive, neutral, negative). The results are integrated into the dashboard for visualizing sentiment trends and distributions.
+    - RDS MySQL: The AWS RDS MySQL database serves as the centralized storage for all structured data. This data is used to populate the dashboard’s visualizations and tables, ensuring the data is consistent, up-to-date, and ready for analysis.
 
 These AWS services work together to create a robust, scalable solution that supports a fully automated data pipeline from PDF upload to data visualization.
 
@@ -87,11 +87,11 @@ These AWS services work together to create a robust, scalable solution that supp
 
 The AI pipeline within this project is designed to be fully automated and integrated with the dashboard. It processes uploaded PDF files and enriches the data through various machine learning models and extraction tools.
 
-    PDF Upload and Extraction: The process begins when a user uploads a PDF file via the dashboard. The file is stored in an S3 bucket and sent for text extraction.
-    Data Extraction: The text extracted from the PDF is analyzed and parsed using NOVA Light, which identifies and extracts relevant data fields from the document.
-    Sentiment Analysis: The extracted text is then passed through MISTRAL Large, which applies sentiment analysis models to classify the content's sentiment. This step enriches the dataset with sentiment information, which is then displayed on the dashboard.
-    Data Storage: Once the text is processed and sentiment is analyzed, the resulting data is structured and saved into the RDS MySQL database, where it becomes available for querying by the dashboard.
-    Dashboard Visualization: The dashboard queries the database to retrieve the structured data and uses Dash and Plotly to generate interactive visualizations, including charts, maps, and tables. Users can interact with the dashboard in real-time, apply filters, and explore different insights.
+- PDF Upload and Extraction: The process begins when a user uploads a PDF file via the dashboard. The file is stored in an S3 bucket and sent for text extraction.
+- Data Extraction: The text extracted from the PDF is analyzed and parsed using NOVA Light, which identifies and extracts relevant data fields from the document.
+- Sentiment Analysis: The extracted text is then passed through MISTRAL Large, which applies sentiment analysis models to classify the content's sentiment. This step enriches the dataset with sentiment information, which is then displayed on the dashboard.
+- Data Storage: Once the text is processed and sentiment is analyzed, the resulting data is structured and saved into the RDS MySQL database, where it becomes available for querying by the dashboard.
+- Dashboard Visualization: The dashboard queries the database to retrieve the structured data and uses Dash and Plotly to generate interactive visualizations, including charts, maps, and tables. Users can interact with the dashboard in real-time, apply filters, and explore different insights.
 
 By automating these steps, the pipeline provides a seamless workflow that efficiently integrates new data into the dashboard, ensuring that users always have access to the most up-to-date information.
 

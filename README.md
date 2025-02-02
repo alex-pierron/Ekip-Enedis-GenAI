@@ -52,6 +52,12 @@ Finally, we noticed the presence of the variable `nb_articles`, which indicates 
 
 ### PDFs Dataset
 
+The project utilizes a dataset comprising PDF files that contain reports on various events related to the electricity distribution company Enedis. These PDFs are rich sources of information, as they include articles from multiple media outlets covering news and events in the northern regions of France. The primary goal of working with this dataset was to process and analyze the PDFs to extract structured and meaningful information from their contents.
+
+Each PDF in the dataset is a compilation of articles, often containing both textual content and images. The challenge lies in the unstructured nature of PDFs, which typically do not provide a clear separation between individual articles or sections. To address this, the project focuses on developing a methodology to segment and identify distinct articles within a single PDF. This segmentation is crucial for isolating individual news pieces, enabling further analysis and extraction of relevant metadata.
+
+The extracted metadata includes key details such as the article's title, publication date, source media, and any associated images. By transforming the unstructured PDF content into a structured format, the dataset becomes more accessible for downstream tasks such as data analysis, visualization, and machine learning. For instance, the structured data can be used to analyze trends in media coverage, sentiment analysis of articles, or geographic distribution of reported events.
+
 
 ## Proposed solution
 

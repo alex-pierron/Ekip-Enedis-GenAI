@@ -1,0 +1,80 @@
+Date;Territoire;Sujet;Thème;Qualité du retour;Média;Articles
+03/01/2023;Nord;Une fuite de gaz provoque une évacuation;Sécurité;Factuel;La voix du Nord;Une fuite de gaz provoque une évacuation à Roubaix
+03/01/2023;Essonne;Un arbre tombé bloque la circulation;Aléas climatiques;Négatif;Le Parisien;Un arbre tombé bloque la circulation à Évry
+03/01/2023;Pas-de-Calais;Un nouveau parc éolien inauguré;Transition écologique;Positif;L'avenir de l'Artois;Un nouveau parc éolien inauguré à Calais
+04/01/2023;Hauts-de-France;Des travaux routiers causent des embouteillages;Infrastructure;Négatif;Nord Littoral;Des travaux routiers causent des embouteillages à Lille
+04/01/2023;Nord;Une école fermée pour cause de moisissures;Éducation;Négatif;Le courrier de fourmis;Une école fermée pour cause de moisissures à Douai
+05/01/2023;Pas-de-Calais;Un festival culturel attire des milliers de visiteurs;Culture;Positif;L'independant;Un festival culturel attire des milliers de visiteurs à Arras
+05/01/2023;Essonne;Une panne d'électricité affecte un hôpital;Réseau;Factuel négatif;Le Parisien;Une panne d'électricité affecte un hôpital à Corbeil-Essonnes
+06/01/2023;Nord;Un incendie dans un entrepôt industriel;Sécurité;Factuel;L'observateur du Douaisis;Un incendie dans un entrepôt industriel à Valenciennes
+06/01/2023;Pas-de-Calais;Une nouvelle ligne de bus mise en service;Transport;Positif;La voix du Nord;Une nouvelle ligne de bus mise en service à Boulogne-sur-Mer
+07/01/2023;Hauts-de-France;Des inondations causent des dégâts matériels;Aléas climatiques;Négatif;Nord Littoral;Des inondations causent des dégâts matériels à Amiens
+07/01/2023;Essonne;Un projet de réhabilitation de quartier approuvé;Urbanisme;Positif;Le Parisien;Un projet de réhabilitation de quartier approuvé à Évry
+08/01/2023;Nord;Une grève des transports perturbe la circulation;Transport;Négatif;Le courrier de fourmis;Une grève des transports perturbe la circulation à Lille
+08/01/2023;Pas-de-Calais;Un nouveau centre commercial ouvre ses portes;Économie;Positif;L'independant;Un nouveau centre commercial ouvre ses portes à Lens
+09/01/2023;Hauts-de-France;Une fuite d'eau affecte plusieurs habitations;Réseau;Factuel négatif;Nord Littoral;Une fuite d'eau affecte plusieurs habitations à Dunkerque
+09/01/2023;Essonne;Un concert de solidarité organisé;Culture;Positif;Le Parisien;Un concert de solidarité organisé à Corbeil-Essonnes
+10/01/2023;Nord;Un accident de la route fait trois blessés;Sécurité;Factuel;L'observateur du Douaisis;Un accident de la route fait trois blessés à Douai
+10/01/2023;Pas-de-Calais;Une exposition d'art contemporain inaugurée;Culture;Positif;La voix du Nord;Une exposition d'art contemporain inaugurée à Calais
+11/01/2023;Hauts-de-France;Des travaux de rénovation dans une école;Éducation;Positif;Nord Littoral;Des travaux de rénovation dans une école à Amiens
+11/01/2023;Essonne;Une fuite de gaz détectée dans un quartier résidentiel;Sécurité;Factuel;Le Parisien;Une fuite de gaz détectée dans un quartier résidentiel à Évry
+12/01/2023;Nord;Un festival de musique annulé en raison de la météo;Culture;Négatif;Le courrier de fourmis;Un festival de musique annulé en raison de la météo à Lille
+12/01/2023;Pas-de-Calais;Un nouveau parc urbain inauguré;Urbanisme;Positif;L'independant;Un nouveau parc urbain inauguré à Arras
+13/01/2023;Hauts-de-France;Une panne d'électricité affecte un quartier;Réseau;Factuel négatif;Nord Littoral;Une panne d'électricité affecte un quartier à Dunkerque
+13/01/2023;Essonne;Un projet de logements sociaux approuvé;Urbanisme;Positif;Le Parisien;Un projet de logements sociaux approuvé à Corbeil-Essonnes
+14/01/2023;Nord;Un incendie dans un immeuble d'habitation;Sécurité;Factuel;L'observateur du Douaisis;Un incendie dans un immeuble d'habitation à Valenciennes
+14/01/2023;Pas-de-Calais;Une nouvelle piste cyclable inaugurée;Transport;Positif;La voix du Nord;Une nouvelle piste cyclable inaugurée à Boulogne-sur-Mer
+15/01/2023;Hauts-de-France;Des inondations causent des perturbations;Aléas climatiques;Négatif;Nord Littoral;Des inondations causent des perturbations à Amiens
+15/01/2023;Essonne;Un nouveau centre culturel ouvre ses portes;Culture;Positif;Le Parisien;Un nouveau centre culturel ouvre ses portes à Évry
+16/01/2023;Nord;Une grève des éboueurs perturbe la collecte des déchets;Environnement;Négatif;Le courrier de fourmis;Une grève des éboueurs perturbe la collecte des déchets à Lille
+16/01/2023;Pas-de-Calais;Un nouveau marché local inauguré;Économie;Positif;L'independant;Un nouveau marché local inauguré à Lens
+17/01/2023;Hauts-de-France;Une fuite d'eau affecte un hôpital;Réseau;Factuel négatif;Nord Littoral;Une fuite d'eau affecte un hôpital à Dunkerque
+17/01/2023;Essonne;Un festival de cinéma organisé;Culture;Positif;Le Parisien;Un festival de cinéma organisé à Corbeil-Essonnes
+18/01/2023;Nord;Un accident de train fait un blessé;Transport;Factuel;L'observateur du Douaisis;Un accident de train fait un blessé à Douai
+18/01/2023;Pas-de-Calais;Une exposition de photographies inaugurée;Culture;Positif;La voix du Nord;Une exposition de photographies inaugurée à Calais
+19/01/2023;Hauts-de-France;Des travaux de rénovation dans un musée;Culture;Positif;Nord Littoral;Des travaux de rénovation dans un musée à Amiens
+19/01/2023;Essonne;Une fuite de gaz détectée dans une école;Sécurité;Factuel;Le Parisien;Une fuite de gaz détectée dans une école à Évry
+20/01/2023;Nord;Un festival de théâtre annulé en raison de la météo;Culture;Négatif;Le courrier de fourmis;Un festival de théâtre annulé en raison de la météo à Lille
+20/01/2023;Pas-de-Calais;Un nouveau parc de loisirs inauguré;Urbanisme;Positif;L'independant;Un nouveau parc de loisirs inauguré à Arras
+21/01/2023;Hauts-de-France;Une panne d'électricité affecte un quartier résidentiel;Réseau;Factuel négatif;Nord Littoral;Une panne d'électricité affecte un quartier résidentiel à Dunkerque
+21/01/2023;Essonne;Un projet de logements étudiants approuvé;Urbanisme;Positif;Le Parisien;Un projet de logements étudiants approuvé à Corbeil-Essonnes
+22/01/2023;Nord;Un incendie dans un centre commercial;Sécurité;Factuel;L'observateur du Douaisis;Un incendie dans un centre commercial à Valenciennes
+22/01/2023;Pas-de-Calais;Une nouvelle ligne de tramway inaugurée;Transport;Positif;La voix du Nord;Une nouvelle ligne de tramway inaugurée à Boulogne-sur-Mer
+23/01/2023;Hauts-de-France;Des inondations causent des perturbations dans les transports;Aléas climatiques;Négatif;Nord Littoral;Des inondations causent des perturbations dans les transports à Amiens
+23/01/2023;Essonne;Un nouveau centre sportif ouvre ses portes;Sport;Positif;Le Parisien;Un nouveau centre sportif ouvre ses portes à Évry
+24/01/2023;Nord;Une grève des enseignants perturbe les écoles;Éducation;Négatif;Le courrier de fourmis;Une grève des enseignants perturbe les écoles à Lille
+24/01/2023;Pas-de-Calais;Un nouveau marché de Noël inauguré;Économie;Positif;L'independant;Un nouveau marché de Noël inauguré à Lens
+25/01/2023;Hauts-de-France;Une fuite d'eau affecte un quartier commercial;Réseau;Factuel négatif;Nord Littoral;Une fuite d'eau affecte un quartier commercial à Dunkerque
+25/01/2023;Essonne;Un festival de danse organisé;Culture;Positif;Le Parisien;Un festival de danse organisé à Corbeil-Essonnes
+26/01/2023;Nord;Un accident de bus fait deux blessés;Transport;Factuel;L'observateur du Douaisis;Un accident de bus fait deux blessés à Douai
+26/01/2023;Pas-de-Calais;Une exposition de sculptures inaugurée;Culture;Positif;La voix du Nord;Une exposition de sculptures inaugurée à Calais
+27/01/2023;Hauts-de-France;Des travaux de rénovation dans une bibliothèque;Culture;Positif;Nord Littoral;Des travaux de rénovation dans une bibliothèque à Amiens
+27/01/2023;Essonne;Une fuite de gaz détectée dans un centre commercial;Sécurité;Factuel;Le Parisien;Une fuite de gaz détectée dans un centre commercial à Évry
+28/01/2023;Nord;Un festival de musique annulé en raison de la météo;Culture;Négatif;Le courrier de fourmis;Un festival de musique annulé en raison de la météo à Lille
+28/01/2023;Pas-de-Calais;Un nouveau parc aquatique inauguré;Urbanisme;Positif;L'independant;Un nouveau parc aquatique inauguré à Arras
+29/01/2023;Hauts-de-France;Une panne d'électricité affecte un quartier résidentiel;Réseau;Factuel négatif;Nord Littoral;Une panne d'électricité affecte un quartier résidentiel à Dunkerque
+29/01/2023;Essonne;Un projet de logements sociaux approuvé;Urbanisme;Positif;Le Parisien;Un projet de logements sociaux approuvé à Corbeil-Essonnes
+30/01/2023;Nord;Un incendie dans un immeuble d'habitation;Sécurité;Factuel;L'observateur du Douaisis;Un incendie dans un immeuble d'habitation à Valenciennes
+30/01/2023;Pas-de-Calais;Une nouvelle piste cyclable inaugurée;Transport;Positif;La voix du Nord;Une nouvelle piste cyclable inaugurée à Boulogne-sur-Mer
+31/01/2023;Hauts-de-France;Des inondations causent des perturbations;Aléas climatiques;Négatif;Nord Littoral;Des inondations causent des perturbations à Amiens
+31/01/2023;Essonne;Un nouveau centre culturel ouvre ses portes;Culture;Positif;Le Parisien;Un nouveau centre culturel ouvre ses portes à Évry
+01/02/2023;Nord;Une grève des éboueurs perturbe la collecte des déchets;Environnement;Négatif;Le courrier de fourmis;Une grève des éboueurs perturbe la collecte des déchets à Lille
+01/02/2023;Pas-de-Calais;Un nouveau marché local inauguré;Économie;Positif;L'independant;Un nouveau marché local inauguré à Lens
+02/02/2023;Hauts-de-France;Une fuite d'eau affecte un hôpital;Réseau;Factuel négatif;Nord Littoral;Une fuite d'eau affecte un hôpital à Dunkerque
+02/02/2023;Essonne;Un festival de cinéma organisé;Culture;Positif;Le Parisien;Un festival de cinéma organisé à Corbeil-Essonnes
+03/02/2023;Nord;Un accident de train fait un blessé;Transport;Factuel;L'observateur du Douaisis;Un accident de train fait un blessé à Douai
+03/02/2023;Pas-de-Calais;Une exposition de photographies inaugurée;Culture;Positif;La voix du Nord;Une exposition de photographies inaugurée à Calais
+04/02/2023;Hauts-de-France;Des travaux de rénovation dans un musée;Culture;Positif;Nord Littoral;Des travaux de rénovation dans un musée à Amiens
+04/02/2023;Essonne;Une fuite de gaz détectée dans une école;Sécurité;Factuel;Le Parisien;Une fuite de gaz détectée dans une école à Évry
+05/02/2023;Nord;Un festival de théâtre annulé en raison de la météo;Culture;Négatif;Le courrier de fourmis;Un festival de théâtre annulé en raison de la météo à Lille
+05/02/2023;Pas-de-Calais;Un nouveau parc de loisirs inauguré;Urbanisme;Positif;L'independant;Un nouveau parc de loisirs inauguré à Arras
+06/02/2023;Hauts-de-France;Une panne d'électricité affecte un quartier résidentiel;Réseau;Factuel négatif;Nord Littoral;Une panne d'électricité affecte un quartier résidentiel à Dunkerque
+06/02/2023;Essonne;Un projet de logements étudiants approuvé;Urbanisme;Positif;Le Parisien;Un projet de logements étudiants approuvé à Corbeil-Essonnes
+07/02/2023;Nord;Un incendie dans un centre commercial;Sécurité;Factuel;L'observateur du Douaisis;Un incendie dans un centre commercial à Valenciennes
+07/02/2023;Pas-de-Calais;Une nouvelle ligne de tramway inaugurée;Transport;Positif;La voix du Nord;Une nouvelle ligne de tramway inaugurée à Boulogne-sur-Mer
+08/02/2023;Hauts-de-France;Des inondations causent des perturbations dans les transports;Aléas climatiques;Négatif;Nord Littoral;Des inondations causent des perturbations dans les transports à Amiens
+08/02/2023;Essonne;Un nouveau centre sportif ouvre ses portes;Sport;Positif;Le Parisien;Un nouveau centre sportif ouvre ses portes à Évry
+09/02/2023;Nord;Une grève des enseignants perturbe les écoles;Éducation;Négatif;Le courrier de fourmis;Une grève des enseignants perturbe les écoles à Lille
+09/02/2023;Pas-de-Calais;Un nouveau marché de Noël inauguré;Économie;Positif;L'independant;Un nouveau marché de Noël inauguré à Lens
+10/02/2023;Hauts-de-France;Une fuite d'eau affecte un quartier commercial;Réseau;Factuel négatif;Nord Littoral;Une fuite d'eau affecte un quartier commercial à Dunkerque
+10/02/2023;Essonne;Un festival de danse organisé;Culture;Positif;Le Parisien;Un festival de danse organisé à Corbeil-Essonnes

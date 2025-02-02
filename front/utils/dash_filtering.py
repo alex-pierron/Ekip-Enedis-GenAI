@@ -59,7 +59,7 @@ def filter_df(df: pd.DataFrame, filters: list) -> pd.DataFrame:
     if theme:
         df = df[df['Thème'].isin(theme)]
     if tonalite:
-        df = df[df['Qualité du retour'].isin(tonalite)]
+        df = df[df['Sentiment'].isin(tonalite)]
     if territory:
         df = df[df['Territoire'].isin(territory)]
     if media:

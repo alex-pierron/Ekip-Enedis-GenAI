@@ -12,7 +12,7 @@ from dash.exceptions import PreventUpdate
 import boto3
 
 
-def export_table_to_excel(n_clicks: int, table_data: list[dict]) -> dash.Dash.no_update | dcc.SendBytes:
+def export_table_to_excel(n_clicks: int, table_data: list[dict]):
     """
     Exports table data to an Excel file when the download button is clicked.
     
@@ -62,7 +62,7 @@ def import_uploaded_pdf_to_s3(
     contents: list[str], 
     filenames: list[str], 
     bucket_name: str = 's3-bucket-enedis', 
-    output_folder: str = 'full_pdf', 
+    output_folder: str = 'full_pdf_test', 
     aws_region: str = 'us-west-2'
 ) -> None:
     """

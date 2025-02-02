@@ -72,7 +72,7 @@ df = fetch_table_as_df(
     user=os.getenv("RDS_USER"),
     password=os.getenv("RDS_PASSWORD"),
     db_name=os.getenv("RDS_DB"),
-    table_name=os.getenv("RDS_TABLE")
+    table_name='media_enedis_bis'# os.getenv("RDS_TABLE")
 )
 
 # Clean the data (e.g., standardize column names, modify values)
@@ -103,6 +103,15 @@ def update_pdf_status():
     with pdf_import_lock:
         pdf_import_status["imported"] = 2
     return jsonify({"status": "success"})
+
+# Callback to reset PDF import status on page load
+@dash_app.callback(
+    Output('pdf-import-store', 'data', allow_duplicate=True),
+    Input('initial-pdf-import-status', 'data'),
+    prevent_initial_call=True
+)
+def reset_pdf_import_status_on_load(initial_data):
+    return initial_data
 
 ##############################
 ## II.a) Application Layout ##
@@ -149,7 +158,8 @@ dash_app.layout = dbc.Container([
 
     # PDF import status store and interval for polling
     dcc.Store(id='pdf-import-store', data={'imported': 0}),
-    dcc.Interval(id='poll-interval', interval=1000, n_intervals=0),
+    dcc.Store(id='initial-pdf-import-status', data={'imported': 0}),
+    dcc.Interval(id='poll-interval', interval=2000, n_intervals=0),
 
     # Search Bar for keywords
     dbc.Row([
@@ -205,8 +215,8 @@ dash_app.layout = dbc.Container([
     ], style=myCSS.container)
 ], fluid=True, style=myCSS.global_layout)
 
-reset_pdf_import_status()
-print(pdf_import_status["imported"])
+#reset_pdf_import_status()
+#print(pdf_import_status["imported"])
 
 ############################################
 ## II.b) Callback to Update Visualization ##
@@ -326,6 +336,7 @@ def handle_pdf_store_update(n_intervals, contents, filenames, store_data):
             store_data['imported'] = 1
 
     return store_data
+
 
 # Callback to update the upload button's appearance based on PDF import status
 @dash_app.callback(

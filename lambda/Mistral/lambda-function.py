@@ -194,7 +194,7 @@ class Helper:
 
 def lambda_handler(event, context):
     article = event["Records"][0]["body"]
-    # article = json.loads(article)
+    article = json.loads(article)
     aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
     aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY")
 

@@ -9,7 +9,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 # Initialize S3 client
-s3 = boto3.client('s3')
+s3 = boto3.client("s3")
 
 
 def extract_pages_from_memory(pdf_reader, start_page, end_page):
@@ -43,13 +43,17 @@ def extract_article_page_ranges_from_pdf(reader):
             if page_text.strip() == "DR Nord-Pas-de-Calais":
                 found_first_article = True
                 current_article_start = page_num + 1
-                logger.info(f"Found start of the first article at page {current_article_start}")
+                logger.info(
+                    f"Found start of the first article at page {current_article_start}"
+                )
                 continue
         else:
             if "Parution" in page_text:
                 if current_article_start is not None:
                     article_page_ranges.append((current_article_start, page_num))
-                    logger.info(f"Article detected: Start {current_article_start}, End {page_num}")
+                    logger.info(
+                        f"Article detected: Start {current_article_start}, End {page_num}"
+                    )
                 current_article_start = page_num + 1
 
     logger.info(f"Extracted article page ranges: {article_page_ranges}")
@@ -81,8 +85,8 @@ def extract_articles_as_pdf_from_memory(pdf_content, output_bucket, output_prefi
 def lambda_handler(event, context):
     try:
         # Get bucket and object key from the event
-        bucket_name = event['Records'][0]['s3']['bucket']['name']
-        object_key = event['Records'][0]['s3']['object']['key']
+        bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
+        object_key = event["Records"][0]["s3"]["object"]["key"]
         output_prefix = "input"
 
         logger.info(f"Received event: {json.dumps(event)}")
@@ -96,17 +100,18 @@ def lambda_handler(event, context):
         logger.info(f"PDF content size: {len(pdf_content)} bytes")
 
         # Process the PDF content and extract articles
-        output_files = extract_articles_as_pdf_from_memory(pdf_content, bucket_name, output_prefix)
+        output_files = extract_articles_as_pdf_from_memory(
+            pdf_content, bucket_name, output_prefix
+        )
 
         logger.info(f"Successfully processed PDF. Extracted articles: {output_files}")
         return {
             "statusCode": 200,
-            "body": json.dumps({"message": "PDF processed successfully!", "output_files": output_files})
+            "body": json.dumps(
+                {"message": "PDF processed successfully!", "output_files": output_files}
+            ),
         }
 
     except Exception as e:
         logger.error(f"An error occurred: {e}", exc_info=True)
-        return {
-            "statusCode": 500,
-            "body": json.dumps(f"Error: {str(e)}")
-        }
+        return {"statusCode": 500, "body": json.dumps(f"Error: {str(e)}")}

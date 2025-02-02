@@ -4,3 +4,6 @@ wordcloud
 plotly
 dash
 dash-bootstrap-components
+PyPDF2
+fitz
+pytesseract

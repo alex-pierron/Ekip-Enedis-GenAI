@@ -12,7 +12,7 @@ from dash.exceptions import PreventUpdate
 import boto3
 
 
-def export_table_to_excel(n_clicks: int, table_data: list[dict]) -> dash.Dash.no_update | dcc.SendBytes:
+def export_table_to_excel(n_clicks: int, table_data: list[dict]):
     """
     Exports table data to an Excel file when the download button is clicked.
     

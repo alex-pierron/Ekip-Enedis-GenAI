@@ -1,0 +1,9 @@
+boto3
+pymysql
+nltk
+pandas
+wordcloud
+plotly
+dash
+dash-bootstrap-components
+flask

@@ -107,6 +107,11 @@ By automating these steps, the pipeline provides a seamless workflow that effici
 
 ##### Nuance Labelisation
 
+
+We have tried to make the `nuance` label more accurate by applying a statistical approach. Instead of directly predicting whether a text is nuanced or not, we asked for a confidence score on the sentiment label. We then gradually increased the threshold to determine the optimal value based on the F1 score, which was then used to classify whether a text should be considered nuanced.
+
+Unfortunately, despite increasing the temperature of the LLM, the model remained too confident in its responses, resulting in insufficient variance to define a meaningful threshold.
+
 #### Roles
 
 AWS services use a role-based system that enables precise management of permissions for each object and service.

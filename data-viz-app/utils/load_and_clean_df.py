@@ -1,24 +1,40 @@
 import os
+import sys
+import pymysql
 import boto3
 import pandas as pd
 from io import StringIO
 from botocore.exceptions import NoCredentialsError
 from utils.shared_utils import normalize_text
 
-def load_data(data_folder: str) -> pd.DataFrame:
-    """Returns a dataframe containing data from all CSVs of a directory"""
-    data_filenames = [filename for filename in os.listdir(data_folder) if filename.endswith('.csv')]
-    df_list = []
+def fetch_table_as_df(host, user, password, db_name, table_name):
+    conn = pymysql.connect(
+        host=host,
+        user=user,
+        password=password,
+        connect_timeout=10
+    )
+    try:
+        cursor = conn.cursor()
+        cursor.execute(f"USE {db_name};")
 
-    # generates a list of dataframes
-    for data_filename in data_filenames:
-        data_filepath = os.path.join(data_folder, data_filename)
-        df = pd.read_csv(data_filepath, delimiter=';')
-        df_list.append(df)
-    
-    # concat them into one df
-    df_concat = pd.concat(df_list, ignore_index=True)
-    return df_concat
+        # get table data
+        query = f"SELECT * FROM {table_name};"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        # get table column names
+        column_query = f"SHOW COLUMNS FROM {table_name};"
+        cursor.execute(column_query)
+        columns = [col[0] for col in cursor.fetchall()]
+
+        df = pd.DataFrame(rows, columns=columns)
+        return df
+
+    finally:
+        cursor.close()
+        conn.close()
+
 
 def standardize_columns(df, columns_to_fix):
     for col in columns_to_fix:
@@ -40,11 +56,43 @@ def standardize_columns(df, columns_to_fix):
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
+    # drop columns
+    df = df.drop(['id', 'nb_articles'], axis=1)
+
+    # modify column values 
+    df["factuel"] = df["factuel"].replace({0: 'Non', 1: 'Oui'})
+    df["nuance"] = df["nuance"].replace({0: 'Non', 1: 'Oui'})
+
+    # Modify "sentiment" column using a dictionary mapping
+    sentiment_mapping = {
+        "POSITIVE": "Positif",
+        "NEGATIVE": "Négatif",
+        "NEUTRAL": "Neutre"
+    }
+    df["sentiment"] = df["sentiment"].map(sentiment_mapping)
+
+    # rename columns
+    rename_dict = {
+        "date": "Date",
+        "territoire": "Territoire",
+        "sujet": "Sujet",
+        "media": "Média",
+        "theme": "Thème",
+        "factuel": "Factuel",
+        "sentiment": "Sentiment",
+        "nuance": "Nuancé",
+        "article": "Article",
+    }
+    df = df.rename(columns=rename_dict)
+
+    # move 'Article' column at the end
+    df["Article"] = df.pop("Article") 
+
     # converts "Date" to datetime (ex: 2023-01-04)
     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
     
     # standardize values (ex: réseau and Réseau should be considered as the same)
-    columns_to_fix = ['Territoire', 'Thème', 'Qualité du retour', 'Média']
+    columns_to_fix = ['Territoire', 'Thème', 'Média']
     df = standardize_columns(df, columns_to_fix)
 
     return df

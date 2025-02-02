@@ -43,9 +43,9 @@ def filter_df(df, filters):
         # split keywords by comma, space, or semicolon
         keywords_list = [normalize_text(kw) for kw in re.split(r'[,\s;]+', keywords.strip()) if kw.strip()]
         
-        # filter rows that all keywords are present in either 'Sujet' or 'Articles'
+        # filter rows that all keywords are present in either 'Sujet' or 'Article'
         def contains_all_keywords(row):
-            combined_text = normalize_text(f"{row['Sujet']} {row['Articles']}")
+            combined_text = normalize_text(f"{row['Sujet']} {row['Article']}")
             return all(kw in combined_text for kw in keywords_list)
 
         df = df[df.apply(contains_all_keywords, axis=1)]

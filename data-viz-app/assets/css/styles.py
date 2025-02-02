@@ -9,7 +9,7 @@ container = {
     'padding': '20px',
     'borderRadius': '15px',
     'boxShadow': '0px 4px 6px #808080',
-    'marginBottom': '5px'
+    'marginBottom': '5px',
 }
 
 ###### Header ######
@@ -32,7 +32,7 @@ date_picker_range = {
 
 ###### Data Visualization ######
 
-pie_chart = {
+pie_bar_chart = {
     'title_font': {
         'family': 'Arial',
         'size': 20,
@@ -40,13 +40,26 @@ pie_chart = {
     },
     'colors': {
         "Positif": '#74c476',
-        "Factuel positif": '#a1d99b',
-        "Factuel": '#dfe1fc',
-        "Factuel négatif": '#f7b7a3',
+        "Neutre": '#dfe1fc',
         "Négatif": '#e65555'
+    },
+    'bar_colors': {
+        "Factuel": {
+            "Oui": '#98d399',
+            "Non": '#ed8181'
+        },
+        "Sentiment": {
+            "Positif": '#98d399',
+            "Neutre": '#dfe1fc',
+            "Négatif": '#ed8181'
+        },
+        "Nuancé": {
+            "Oui": '#98d399',
+            "Non": '#ed8181'
+        }
     }
 }
-pie_chart_colors_keys = list(pie_chart['colors'].keys())
+pie_bar_chart_colors_keys = list(pie_bar_chart['colors'].keys())
 
 
 geographic_distribution = {
@@ -56,32 +69,18 @@ geographic_distribution = {
         'size': 20,
         'color': 'black',
     },
-    'group_mapping': {
-        'Positif': 'Positif',
-        'Factuel positif': 'Positif',
-        'Factuel': 'Factuel',
-        'Négatif': 'Négatif',
-        'Factuel négatif': 'Négatif'
-    },
     'color_mapping': {
         'Positif': '#98d399',
-        'Factuel': '#dfe1fc',  
+        'Neutre': '#dfe1fc',  
         'Négatif': '#ed8181',
         'Inconnu': '#f2f2f2',
     }
 }
 
 sentiment_trend = {
-    'group_mapping': {
-        'Positif': 'Positif',
-        'Factuel positif': 'Positif',
-        'Factuel': 'Factuel',
-        'Négatif': 'Négatif',
-        'Factuel négatif': 'Négatif'
-    },
     'color_mapping': {
         'Positif': '#98d399',
-        'Factuel': '#a9aff7',  
+        'Neutre': '#a9aff7',  
         'Négatif': '#ed8181'
     }
 }
@@ -135,13 +134,13 @@ data_table = {
     'style_data_conditional': [
         { # colors according to the pie chart
             'if': {
-                'column_id': 'Qualité du retour',
-                'filter_query': f'{{Qualité du retour}} = "{key}"'
+                'column_id': 'Sentiment',
+                'filter_query': f'{{Sentiment}} = "{key}"'
             },
             'backgroundColor': color,  
             'color': 'black', 
         }
-        for key, color in pie_chart['colors'].items()
+        for key, color in pie_bar_chart['colors'].items()
     ] + \
     [ # colors for less important columns 
         {'if': {'column_id': 'Date'}, 'backgroundColor': '#f6f6f6', 'color': 'black'}, 
